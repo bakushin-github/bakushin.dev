@@ -1,0 +1,9 @@
+/.env
+
+# Node.js 関連
+node_modules/
+.next/
+out/
+
+# OS関連
+.DS_Store

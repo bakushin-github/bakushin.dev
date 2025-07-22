@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = ".next" # この行を追加してください
+
+[functions]
+  directory = "netlify/functions"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

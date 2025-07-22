@@ -1,0 +1,362 @@
+@use "../../app/styles/variables.module" as *;
+
+.worksContents {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  /* 1024px: 17px | 1920px: 32px */
+  grid-column-gap: clamp(17px, 1.667vw, 32px);
+  /* 1024px: 40px | 1920px: 75px */
+  grid-row-gap: clamp(40px, 3.889vw, 75px);
+  padding-top: clamp(47.59px, 45.18px + 0.75vw, 59.61px);
+  @media (max-width: 1023px) {
+    place-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding-top: clamp(5.69px, 0.74vw + 3.32px, 9px);
+  }
+}
+
+/* 作品カードのラッパー（767px以下で新規追加） */
+.work-imageLink {
+  cursor: pointer;
+  @media (max-width: 767px) {
+    /* 320px: 283px | 767px: 706px */
+    width: clamp(283px, 94.64vw - 19.36px, 706px);
+    max-width: 706px;
+    margin: 0 auto; /* 中央寄せ */
+    margin-top: clamp(35.1px, 10.2vw + 2.5px, 80px);
+  }
+}
+
+/* 作品カード全体のスタイル */
+.workCard {
+  position: relative;
+  /* 1024px: 251px | 1920px: 471px */
+  width: clamp(251px, 24.514vw, 471px);
+  /* 1024px: 246px | 1920px: 461px */
+  height: clamp(246px, 24.028vw, 461px);
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    width: clamp(16.563rem, -0.002rem + 34.51vw, 22.063rem);
+    height: clamp(16.25rem, 0.062rem + 33.73vw, 21.625rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 283px | 767px: 706px */
+    width: clamp(283px, 94.64vw - 19.36px, 706px);
+    /* 320px: 277px | 767px: 692px */
+    height: clamp(277px, 92.86vw - 20.12px, 692px);
+    max-width: 706px;
+    /* margin-topはラッパーに移動 */
+  }
+  border-radius: 8px;
+  overflow: hidden;
+  background: $base-color-white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+
+  &:hover {
+    .title {
+      &::after {
+        animation: titleLine 0.4s ease-in-out;
+        opacity: 1;
+      }
+    }
+
+    .worksLink {
+      background-position: 0 0;
+    }
+
+    .worksLink::before {
+      background-color: transparent;
+      background-image: url("../../public/Works/PC/ArrowWhite.webp");
+      animation: arrow-cycle 0.4s ease-in-out 0.4s forwards;
+    }
+  }
+}
+
+/* ヘッダー部分（画像とカテゴリを含む） */
+.workHeader {
+  position: relative;
+  width: 100%;
+  /* 1024px: 142px | 1920px: 267px */
+  height: clamp(142px, 13.889vw, 267px);
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    height: clamp(9.375rem, -0.037rem + 19.61vw, 12.5rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 160px | 767px: 400px */
+    width: clamp(283px, 94.64vw - 19.36px, 706px);
+    height: clamp(160px, 53.69vw + 7.31px, 400px);
+  }
+
+  .thumbnailImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .workCategory {
+    position: absolute;
+    max-width: 300px;
+    width: auto;
+    /* 1024px: 21px | 1920px: 40px */
+    height: clamp(21px, 2.083vw, 40px);
+    /* 1024px: 11px | 1920px: 21px */
+    top: clamp(11px, 1.111vw, 21px);
+    right: clamp(11px, 1.111vw, 21px);
+    border-radius: 3px;
+    border-width: 1px;
+    /* 1024px: 7px | 1920px: 13px */
+    padding: clamp(9.3269px, 9.1346px + 0.0601vw, 10.2885px);
+    padding-top: clamp(10.3269px, 10.1346px + 0.0601vw, 11.2885px);
+    padding-bottom: clamp(8.3269px, 8.1346px + 0.0601vw, 9.2885px);
+    color: $main-color-dark_blue;
+    background: $base-color-white;
+    font-family: "Noto Sans JP";
+    font-weight: 600;
+    /* 1024px: 10px | 1920px: 19px */
+    font-size: clamp(13.0535px, 12.7831px + 0.0845vw, 14.4056px);
+    line-height: 160%;
+    letter-spacing: 0%;
+    border: 1px solid #caccd3;
+    box-shadow: 0px 1px 10px 0px #19213d33;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media screen and (min-width: 768px) and (max-width: 1023px) {
+      height: clamp(1.438rem, 0.12rem + 2.75vw, 1.875rem);
+    }
+    @media (max-width: 767px) {
+      font-size: clamp(10.76px, 4.08vw - 2.3px, 29px);
+      height: clamp(25.77px, 5.87vw + 6.99px, 52px);
+      padding: clamp(7.87px, 2.71vw - 0.82px, 20px);
+    }
+  }
+}
+
+/* フッター部分（タイトル、スキル、説明文を含む） */
+.workFooter {
+  position: relative;
+  /* 1024px: 17px 22px | 1920px: 32px 42px */
+  @media (min-width: 1024px) {
+    /* 1024px: 104px | 1920px: 195px */
+    height: clamp(104px, 10.139vw, 195px);
+  }
+  padding: clamp(17px, 1.667vw, 32px) clamp(22px, 2.188vw, 42px);
+  box-sizing: border-box;
+  @media screen and (min-width: 768px) and (max-width: 1023.98px) {
+    height: clamp(6.875rem, 0.099rem + 14.12vw, 9.125rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 117px | 767px: 292px */
+    height: clamp(117px, 39.15vw - 8.28px, 292px);
+    /* 320px: 16px | 767px: 30px */
+    padding-top: clamp(16px, 3.13vw + 6px, 30px);
+    /* 320px: 27px | 767px: 40px */
+    padding-inline: clamp(27px, 2.91vw + 17.69px, 40px);
+  }
+}
+
+.title {
+  margin: 0;
+  /* 1024px: 9px | 1920px: 17px */
+  padding-bottom: clamp(9px, 0.903vw, 17px);
+  /* 1024px: 11px | 1920px: 21px */
+  font-size: clamp(11px, 1.111vw, 21px);
+  font-weight: 600;
+  color: #333;
+  position: relative;
+  transition: border-bottom 0.4s ease-in-out;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: clamp(0.875rem, 0.122rem + 1.57vw, 1.125rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 13.2px | 767px: 36px */
+    font-size: clamp(13.2px, 5.1vw - 3.13px, 36px);
+  }
+  @media (width:375px) {
+    padding-inline: 22px;
+  }
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    /* 1024px: 20px | 1920px: 37px */
+    top: clamp(20px, 1.944vw, 37px);
+    @media (max-width: 767px) {
+      top: clamp(15.79px, 7.65vw - 8.69px, 50px);
+    }
+    left: 0;
+    width: 100%;
+    height: 0.5px;
+    background-color: $main-color-blue;
+    opacity: 0;
+  }
+}
+
+.skill {
+  margin: 0;
+  /* 1024px: 10px | 1920px: 19px */
+  font-size: clamp(10px, 0.972vw, 19px);
+  color: #666;
+  /* 1024px: 6px | 1920px: 11px */
+  margin-bottom: clamp(6px, 0.556vw, 11px);
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: clamp(0.688rem, 0.123rem + 1.18vw, 0.875rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 10.89px | 767px: 28px */
+    font-size: clamp(10.89px, 3.83vw - 1.37px, 28px);
+  }
+
+  .caption {
+    margin: 0;
+    /* 1024px: 10px | 1920px: 19px */
+    font-size: clamp(10px, 0.972vw, 19px);
+    color: #666;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@keyframes titleLine {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.worksLink {
+  position: absolute;
+  /* 1024px: 28px | 1920px: 53px */
+  width: clamp(28px, 2.778vw, 53px);
+  height: clamp(28px, 2.778vw, 53px);
+  /* 1024px: 22px | 1920px: 41px */
+  bottom: 24px;
+  right: 32px;
+  @media (max-width: 1024px) {
+    bottom: 17px;
+    right: 23px;
+  }
+  @media (max-width: 767px) {
+    /* 320px: 35.79px | 767px: 70px */
+    width: clamp(35.79px, 7.65vw + 11.31px, 70px);
+    height: clamp(35.79px, 7.65vw + 11.31px, 70px);
+right: clamp(24px, 4.08vw + 8.4px, 42px);
+bottom: clamp(40px, -1.53vw + 46.74px, 35px);
+
+
+  }
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 1px;
+  background: linear-gradient(282.13deg, #366195 10.86%, #333398 77.59%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.4s ease-in-out;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: $base-color-white;
+    background-image: url("../../public/Works/PC/ArrowBlue.webp");
+    /* 1024px: 13px | 1920px: 24px */
+    background-size: clamp(13px, 1.25vw, 24px);
+    @media (max-width: 767px) {
+      background-size: clamp(16.41px, 0.8vw + 13.84px, 20px);
+    }
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 7px;
+    transition: background-color 0.4s ease-in-out,
+      background-image 0.4s ease-in-out, transform 0.3s ease-out,
+      opacity 0.3s ease-out;
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.worksLink.clicked::before {
+  animation: arrow-cycle 0.4s ease-in-out forwards;
+}
+
+// 矢印のアニメーション
+@keyframes arrow-cycle {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  20% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  50.01% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  70% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+/* 1920pxまでのclamp()に対応したため、1279pxのメディアクエリは実質不要になる場合があります */
+@media (max-width: 1920px) {
+  /* 1024pxから1920pxの間はclampが機能します。
+     もしこの範囲で特別なスタイル変更が必要な場合はここに記述します。 */
+}
+
+/* 1024px未満のブレークポイントはそのまま残します */
+@media (max-width: 1023.98px) {
+  /* clampの最小値が適用され始めます。
+     768px以下のスタイルをここに集約・上書きすることも可能です。 */
+}
+
+@media (max-width: 768px) {
+  .swiper-slide {
+    width: auto !important;
+
+    &:not(:first-child) {
+      margin-left: 15px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .workFooter {
+    padding: 15px 20px;
+  }
+
+  // .worksLink {
+  //   right: 20px;
+  //   bottom: 15px;
+  // }
+}

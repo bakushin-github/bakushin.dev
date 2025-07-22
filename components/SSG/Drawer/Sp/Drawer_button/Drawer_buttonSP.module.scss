@@ -1,0 +1,36 @@
+@use "../../../../../app/styles/variables.module" as *;
+
+.drawerButton{
+
+}
+
+.drawerButton__button{
+  padding: 13.96px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: $main-color-dark_blue;
+
+display: flex;
+justify-content: center;
+align-items: center;
+border-radius: 50%;
+}
+
+.drawerButton__button__inner{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 3.49px;
+  grid-row-gap:3.49px;
+  width: 23px;
+  height: 23px;
+}
+
+.drawerButton__dot{
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: $base-color-white;
+  
+}

@@ -1,0 +1,260 @@
+@use "../../app/styles/variables.module" as *;
+
+$loading-bg-start: #424242;
+$loading-bg-end: #424242;
+$loading-text-color: #fff;
+$container-max-width: 1440px;
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  padding-left: clamp(107px, 8vw, 120px);
+  @media (max-width: 479px) {
+    padding-left: clamp(68.23px, calc(8.6735vw + 40.47px), 107px);
+  }
+  @media (max-width: 370px) {
+    padding-left: 30px;
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: left;
+  background: #fff;
+  z-index: 9999;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    background: $loading-bg-start;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
+  }
+
+  &::before {
+    top: -10vh;
+    transform-origin: center bottom;
+  }
+
+  &::after {
+    bottom: -10vh;
+    transform-origin: center top;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &--completing {
+    &::before {
+      transform: translateY(-100%);
+    }
+    &::after {
+      transform: translateY(100%);
+    }
+  }
+
+  &__progress-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+    max-width: $container-max-width;
+    overflow: hidden;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @media (max-width: 479px) {
+      position: static !important;
+      width: 100% !important;
+      max-width: none !important;
+      transform: none !important;
+      top: auto !important;
+      height: auto !important;
+      padding-top: 50vh !important;
+
+      display: flex !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      padding-left: clamp(24px, 5vw, 40px);
+    }
+  }
+
+  &__progress-display {
+    display: flex;
+    align-items: center; // baselineからcenterに変更
+    justify-content: left;
+    gap: clamp(20px, 1.67vw, 24px);
+    flex-wrap: wrap;
+    // 共通の基準線を設定
+    line-height: 1;
+
+    @media (max-width: 479px) {
+      justify-content: flex-start !important;
+      text-align: left !important;
+      align-items: center !important; // centerに変更
+    }
+  }
+
+  &__progress-number {
+    color: $loading-text-color;
+    font-size: clamp(44px, 1.88vw + 36.96px, 64px);
+    font-weight: 500;
+    font-family: "DM Sans";
+    line-height: 1;
+    user-select: none;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+    animation: numberPulse 0.1s ease-out;
+    display: flex; // flexに変更
+    align-items: center; // 中心揃え
+    height: clamp(44px, 1.88vw + 36.96px, 64px); // 高さを明示的に設定
+
+    @media (max-width: 479px) {
+      font-size: 44px;
+      height: 44px;
+      text-align: left;
+      margin-bottom: 0;
+      width: auto;
+    }
+  }
+
+  &__progress-percent {
+    color: $loading-text-color;
+    font-size: clamp(24px, 1.5vw + 18.38px, 40px);
+    font-weight: 500;
+    font-family: "DM Sans";
+    line-height: 1;
+    user-select: none;
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+    display: flex; // flexに変更
+    align-items: center; // 中心揃え
+    height: clamp(44px, 1.88vw + 36.96px, 64px); // 数字と同じ高さに設定
+    margin-left: -12px;
+
+    @media (max-width: 479px) {
+      font-size: 24px;
+      height: 44px; // 数字と同じ高さ
+      text-align: left;
+      margin-bottom: 0;
+      width: auto;
+      margin-left: -10px;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center; // centerに変更
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: logoSlideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    height: clamp(44px, 1.88vw + 36.96px, 64px); // 数字と同じ高さに設定
+
+    @media (max-width: 479px) {
+      height: 44px; // 数字と同じ高さ
+    }
+
+    img {
+      display: block;
+      width: clamp(140px, 10.38vw + 20.72px, 220px);
+      height: clamp(39px, 2.71vw + 9.01px, 61px);
+      max-width: none;
+      max-height: none;
+      // 画像の中心を揃えるための調整
+      object-fit: contain;
+
+      @media (max-width: 479px) {
+        width: 140px;
+        height: 39px;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@keyframes numberPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes logoSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-screen,
+.loading-screen__progress-number,
+.loading-screen__logo {
+  will-change: transform, opacity;
+}
+
+.loading-screen {
+  font-display: swap;
+}
+
+@media (prefers-contrast: high) {
+  .loading-screen {
+    background: #000;
+    &__progress-number {
+      color: #fff;
+      text-shadow: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-screen {
+    transition-duration: 0.01ms;
+    &__logo {
+      animation: none;
+      opacity: 1;
+      transform: translateY(0);
+      img {
+        transform: none !important;
+      }
+    }
+  }
+
+  @keyframes numberPulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes logoSlideDown {
+    0%,
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

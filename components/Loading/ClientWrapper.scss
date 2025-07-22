@@ -1,0 +1,43 @@
+// ClientWrapper.scss
+
+.client-wrapper {
+  position: relative;
+  min-height: 100vh;
+  
+  &__content {
+    position: relative;
+    min-height: 100vh;
+    // fixed要素の問題を避けるため、transformやclip-pathを慎重に使用
+    
+    // 初期状態（中央から開くアニメーション用）
+    &--hidden {
+      opacity: 0;
+      // clip-pathとtransformを使わずに、opacityのみでアニメーション
+      // これによりfixed要素への影響を最小限に
+    }
+    
+    // 表示状態（中央から上下に開く）
+    &--visible {
+      opacity: 1;
+      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+  }
+}
+
+// 減光モード対応
+@media (prefers-reduced-motion: reduce) {
+  .client-wrapper__content {
+    &--hidden,
+    &--visible {
+      transition-duration: 0.01ms;
+    }
+    
+    &--hidden {
+      opacity: 0;
+    }
+    
+    &--visible {
+      opacity: 1;
+    }
+  }
+}

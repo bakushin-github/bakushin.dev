@@ -1,0 +1,58 @@
+@use "../../../app/styles/variables.module" as *;
+
+.works {
+  background-image: url("../../../public/Works/PC/Works_bg.webp");
+  background-size: cover;
+  max-width: 3000px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  padding-bottom: 96px;
+}
+
+.works__inner{
+
+  div,h2{
+    color: $base-color-white;
+  }
+  
+//   @media(width: 375px){
+//  padding-bottom: 32px;
+// }
+}
+
+.works__title{
+// @media(width: 375px){
+//   height:68px;
+// }
+}
+
+.works__listButton {
+ position: relative;
+ display: flex;
+ align-items: center;
+ justify-content: center; /* デフォルトで中央寄せ */
+ gap: 32px; /* ボタン間の間隔を調整 */
+ // bottom, right の絶対配置は削除
+
+ @media (min-width: 769px) {
+   position: absolute;
+   bottom: 96px;
+   right: calc(50% - 550px + 149.5px + 16px); /* PC: 右端を基準に調整 (要調整) */
+   justify-content: flex-end; /* PCでは右寄せ */
+ }
+
+ @media (max-width: 768px) {
+   position: absolute;
+   bottom: 118.28px;
+   left: 50%;
+   transform: translateX(-50%); /* SP: 中央寄せ */
+   flex-direction: column-reverse; /* SP: ボタンを縦に並べる場合 */
+   gap: 16px; /* SP: ボタン間の縦方向の間隔 */
+ }
+}
+
+.works__listButton-prevNext {
+ display: flex;
+ gap: 16px; /* prev/nextボタン間の間隔 */
+}

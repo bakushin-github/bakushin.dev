@@ -1,0 +1,647 @@
+@use "../../app/styles/variables.module" as *;
+
+.allWorks {
+  position: relative;
+}
+.breadcrumbWrapper {
+  position: relative;
+  top: -9px;
+  // left: calc((170px / 1440px) * 100%);
+}
+
+.Breadcrumb_breadcrumb__WeqTb {
+  padding: 0;
+}
+
+.works-container {
+  /* 1024px: 1106px | 1920px: 1106px (固定値を維持) */
+  width: (1106px/1400px * 100%);
+  margin: auto;
+  /* 1024px: 96px | 1920px: 96px */
+  padding-bottom: clamp(60px, 6.25vw, 96px);
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+}
+
+.works_separatorLine {
+  display: block;
+  width: 100%;
+  background: #caccd3;
+  height: 1px;
+  /* 1024px: 48px | 1920px: 48px */
+  margin-block: clamp(30px, 3.125vw, 48px);
+}
+
+.works_headTitle {
+  /* 1024px: 26px | 1920px: 26px */
+  padding-top: clamp(20px, 1.736vw, 26px);
+  max-width: 1100px;
+  width: 100%;
+  color: $main-color-dark_blue;
+}
+
+.works_subText {
+  position: relative;
+  font-family: "Noto Sans JP";
+  font-weight: 400;
+  /* 1024px: 14px | 1920px: 14px */
+  font-size: clamp(12px, 0.972vw, 14px);
+  line-height: 170%;
+  letter-spacing: 4%;
+  /* 1024px: 26px | 1920px: 26px */
+  padding-left: clamp(20px, 1.736vw, 26px);
+  color: $main-color-dark_blue;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 0;
+    border: solid 2px $accent-color-red;
+    /* 1024px: 12px | 1920px: 12px */
+    width: clamp(10px, 0.833vw, 12px);
+    height: clamp(10px, 0.833vw, 12px);
+    border-radius: 50px;
+    color: $accent-color-red;
+  }
+}
+
+.works_h1Title {
+  margin-top: 4px;
+  /* 1024px: 96px | 1920px: 96px */
+  height: clamp(60px, 6.25vw, 96px);
+  color: $main-color-dark_blue;
+  font-size: clamp(34.55px, 2.63vw + 26.13px, 76.62px);
+}
+
+.workCard-grid {
+  position: relative;
+  /* 1024px: 40px | 1920px: 40px */
+  padding-bottom: clamp(30px, 2.604vw, 40px);
+  display: grid;
+  /* 1024px: 353px | 1920px: 353px (固定値を維持) */
+  grid-template-columns: repeat(3, 1fr);
+  /* 1024px: 56px | 1920px: 75px */
+  grid-row-gap: clamp(40px, 3.889vw, 75px);
+  /* 1024px: 24px | 1920px: 32px */
+  grid-column-gap: clamp(17px, 1.667vw, 32px);
+  justify-content: center;
+  @media (max-width: 1023px) {
+    place-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+  }
+}
+
+.work-card {
+  position: relative;
+  margin: 0;
+  /* 1024px: 251px | 1920px: 471px */
+  width: clamp(251px, 24.514vw, 471px);
+  /* 1024px: 246px | 1920px: 461px */
+  height: clamp(246px, 24.028vw, 461px);
+  gap: 10px;
+  border: 0.5px light grey;
+  border-radius: 8px;
+  background: $base-color-white;
+  text-align: center;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    width: clamp(16.563rem, -0.002rem + 34.51vw, 22.063rem);
+    height: clamp(16.25rem, 0.062rem + 33.73vw, 21.625rem);
+  }
+  @media (max-width: 767px) {
+    /* 320px: 283px | 767px: 706px */
+    width: clamp(283px, 94.64vw - 19.36px, 706px);
+    /* 320px: 277px | 767px: 692px */
+    height: clamp(277px, 92.86vw - 20.12px, 692px);
+    margin-top: clamp(35.1px, 10.2vw + 2.5px, 80px);
+    max-width: 706px;
+  }
+  &:hover {
+    .work-title {
+      &::after {
+        animation: titleLine 0.4s ease-in-out;
+        opacity: 1;
+      }
+    }
+
+    .work-link {
+      background-position: 0 0;
+    } // グラデーションを左から表示
+
+    .work-link::before {
+      // ホバー時の初期変化（矢印の色と背景）
+      background-color: transparent; // 親のグラデーションが見えるように
+      background-image: url("../../public/Works/PC/ArrowWhite.webp"); // 白い矢印に変更
+
+      // 矢印の連続アニメーションを適用
+      // initial_hover_duration (0.4s) の後に開始
+      animation: arrow-cycle 0.4s ease-in-out 0.4s forwards;
+    }
+  }
+
+  &:hover .work-header img {
+    transform: scale(1.05);
+  }
+
+  /* header内の画像 */
+  .work-header {
+    /* 1024px: 142px | 1920px: 267px */
+    height: clamp(142px, 13.889vw, 267px);
+    box-sizing: border-box;
+    border: 1px solid #caccd3;
+    border-bottom-width: 0;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    @media screen and (min-width: 768px) and (max-width: 1023px) {
+      height: clamp(9.375rem, -0.037rem + 19.61vw, 12.5rem);
+    }
+    @media (max-width: 767px) {
+      /* 320px: 160px | 767px: 400px */
+      height: clamp(160px, 53.69vw + 7.31px, 400px);
+    }
+
+    img {
+      /* 1024px: 142px | 1920px: 267px */
+      height: clamp(142px, 13.889vw, 267px);
+      /* 1024px: 251px | 1920px: 471px */
+      width: clamp(251px, 24.514vw, 471px);
+      object-fit: cover;
+      transition: 0.3s ease-in-out;
+      transform: translateZ(0);
+      @media screen and (min-width: 768px) and (max-width: 1023px) {
+        height: clamp(9.375rem, -0.037rem + 19.61vw, 12.5rem);
+        width: clamp(16.563rem, -0.002rem + 34.51vw, 22.063rem);
+      }
+      @media (max-width: 767px) {
+        /* 320px: 160px | 767px: 400px */
+        height: clamp(160px, 53.69vw + 7.31px, 400px);
+        /* 320px: 283px | 767px: 706px */
+        width: clamp(283px, 94.64vw - 19.36px, 706px);
+      }
+    }
+  }
+
+  .work-category {
+    position: absolute;
+    max-width: 300px;
+    width: auto;
+    /* 1024px: 21px | 1920px: 40px */
+    height: clamp(21px, 2.083vw, 40px);
+    /* 1024px: 11px | 1920px: 21px */
+    top: clamp(11px, 1.111vw, 21px);
+    right: clamp(11px, 1.111vw, 21px);
+    border-radius: 3px;
+    border-width: 1px;
+    /* 1024px: 7px | 1920px: 13px */
+    padding: clamp(7px, 0.694vw, 13px);
+    color: $main-color-dark_blue;
+    background: $base-color-white;
+    font-family: "Noto Sans JP";
+    font-weight: 600;
+    /* 1024px: 10px | 1920px: 19px */
+    font-size: clamp(10px, 0.972vw, 19px);
+    @media (max-width: 767px) {
+      font-size: clamp(10.76px, 4.08vw - 2.3px, 29px);
+      height: clamp(25.77px, 5.87vw + 6.99px, 52px);
+      padding: clamp(7.87px, 2.71vw - 0.82px, 20px);
+    }
+    line-height: 160%;
+    letter-spacing: 0%;
+    border: 1px solid #caccd3;
+    box-shadow: 0px 1px 10px 0px #19213d33;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    @media screen and (min-width: 768px) and (max-width: 1023px) {
+      height: clamp(1.438rem, 0.12rem + 2.75vw, 1.875rem);
+    }
+  }
+
+  .work-footer {
+    /* 1024px: 104px | 1920px: 195px */
+    height: clamp(104px, 10.139vw, 195px);
+    /* 1024px: 17px | 1920px: 32px */
+    padding-top: clamp(17px, 1.667vw, 32px);
+    /* 1024px: 22px | 1920px: 42px */
+    padding-inline: clamp(22px, 2.188vw, 42px);
+    text-align: left;
+    box-sizing: border-box;
+    border: 1px solid #caccd3;
+    border-top-width: 0;
+    border-radius: 0 0 8px 8px;
+    @media screen and (min-width: 768px) and (max-width: 1023.98px) {
+      height: clamp(6.875rem, 0.099rem + 14.12vw, 9.125rem);
+    }
+    @media (max-width: 767px) {
+      /* 320px: 117px | 767px: 292px */
+      height: clamp(117px, 39.15vw - 8.28px, 292px);
+      /* 320px: 16px | 767px: 30px */
+      padding-top: clamp(16px, 3.13vw + 6px, 30px);
+      /* 320px: 27px | 767px: 40px */
+      padding-inline: clamp(27px, 2.91vw + 17.69px, 40px);
+    }
+
+    h2 {
+      /* 1024px: 9px | 1920px: 17px */
+      padding-bottom: clamp(9px, 0.903vw, 17px);
+      margin: 0;
+      box-sizing: border-box;
+      /* 1024px: 11px | 1920px: 21px */
+      font-size: clamp(11px, 1.111vw, 21px);
+      font-weight: 600;
+      position: relative;
+      transition: border-bottom 0.4s ease-in-out;
+      @media screen and (min-width: 768px) and (max-width: 1023px) {
+        font-size: clamp(0.875rem, 0.122rem + 1.57vw, 1.125rem);
+      }
+      @media (max-width: 767px) {
+        /* 320px: 13.2px | 767px: 36px */
+        font-size: clamp(13.2px, 5.1vw - 3.13px, 36px);
+      }
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        /* 1024px: 20px | 1920px: 37px */
+        top: clamp(20px, 1.944vw, 37px);
+        @media (max-width: 767px) {
+          top: clamp(15.79px, 7.65vw - 8.69px, 50px);
+        }
+        left: 0;
+        width: 100%;
+        height: 0.5px;
+        background-color: $main-color-blue;
+        opacity: 0;
+      }
+    }
+
+    .work-skill {
+      margin: 0;
+      /* 1024px: 10px | 1920px: 19px */
+      font-size: clamp(10px, 0.972vw, 19px);
+      color: #666;
+      /* 1024px: 6px | 1920px: 11px */
+      margin-bottom: clamp(6px, 0.556vw, 11px);
+      /* 1024px: 40px | 1920px: 40px */
+      height: clamp(30px, 2.604vw, 40px);
+      box-sizing: border-box;
+      @media screen and (min-width: 768px) and (max-width: 1023px) {
+        font-size: clamp(0.688rem, 0.123rem + 1.18vw, 0.875rem);
+      }
+      @media (max-width: 767px) {
+        /* 320px: 10.89px | 767px: 28px */
+        font-size: clamp(10.89px, 3.83vw - 1.37px, 28px);
+      }
+    }
+  }
+}
+
+@keyframes titleLine {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.work-link {
+  position: absolute;
+  /* 1024px: 28px | 1920px: 53px */
+  width: clamp(28px, 2.778vw, 53px);
+  height: clamp(28px, 2.778vw, 53px);
+  /* 1024px: 22px | 1920px: 41px */
+  right: clamp(22px, 2.188vw, 42px);
+  bottom: clamp(17px, 1.667vw, 32px);
+  @media (max-width: 1024px) {
+    bottom: 17px;
+    right: 23px;
+  }
+  @media (max-width: 767px) {
+    /* 320px: 35.79px | 767px: 70px */
+    width: clamp(35.79px, 7.65vw + 11.31px, 70px);
+    height: clamp(35.79px, 7.65vw + 11.31px, 70px);
+    /* 320px: 20px | 767px: 42px */
+    right: clamp(20px, 4.92vw + 4.26px, 42px);
+    /* 320px: 15px | 767px: 32px */
+    bottom: clamp(15px, 3.8vw + 2.83px, 32px);
+  }
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; // はみ出した要素をクリップするために重要
+
+  // グラデーションボーダーのための余白
+  padding: 1px;
+
+  // 背景グラデーション（ホバーで表示される部分）
+  background: linear-gradient(282.13deg, #366195 10.86%, #333398 77.59%);
+  background-size: 200% 100%; // アニメーションのために幅を2倍に
+  background-position: 100% 0; // 初期状態ではグラデーションの左側を隠す
+  transition: background-position 0.4s ease-in-out; // グラデーションの出現アニメーション
+
+  // 矢印アイコンと内側背景のコンテナ
+  &::before {
+    content: "";
+    display: block; // transformとサイズ指定のため
+    width: 100%; // 親要素のpadding領域いっぱいに広がる
+    height: 100%; // 親要素のpadding領域いっぱいに広がる
+
+    background-color: $base-color-white; // 通常時の背景色
+    background-image: url("../../public/Works/PC/ArrowBlue.webp"); // 通常時の矢印
+    /* 1024px: 13px | 1920px: 24px */
+    background-size: clamp(13px, 1.25vw, 24px);
+    @media (max-width: 767px) {
+      background-size: clamp(16.41px, 0.8vw + 13.84px, 20px);
+    }
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: 7px; // 親要素のradiusより少し小さくして内側感を出す
+
+    // 初期状態とホバー解除時のためのトランジション
+    // transform と opacity はアニメーション終了後にスムーズに戻るように
+    transition: background-color 0.4s ease-in-out,
+      background-image 0.4s ease-in-out, transform 0.3s ease-out,
+      // ホバー解除時の戻りアニメーション
+      opacity 0.3s ease-out; // ホバー解除時の戻りアニメーション
+
+    // アニメーションのための初期transformとopacity
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.work-link.clicked::before {
+  animation: arrow-cycle 0.8s ease-in-out forwards;
+}
+
+// 矢印の連続アニメーションのキーフレーム
+@keyframes arrow-cycle {
+  // アニメーション開始時 (白い矢印が中央にある状態)
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+
+  // --- Phase 1: 右へ移動して消える ---
+  // (アニメーション全体の 0% から 50% を使用)
+
+  // 少し中央で待機
+  20% {
+    // 例: 1.2s * 0.2 = 0.24s 地点
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  // 右端へ移動し、完全に透明になる
+  50% {
+    // 例: 1.2s * 0.5 = 0.6s 地点
+    transform: translateX(100%); // 要素の幅分、右へ移動
+    opacity: 0;
+  }
+
+  // --- Phase 2: 左から出現して中央へ移動 ---
+  // (アニメーション全体の 50% から 100% を使用)
+
+  // 右で消えた直後、瞬時に左端へ移動 (まだ透明)
+  50.01% {
+    // ほぼ50%と同時
+    transform: translateX(-100%); // 要素の幅分、左へ移動
+    opacity: 0;
+  }
+  // 左端で少し待機 (まだ透明)
+  70% {
+    // 例: 1.2s * 0.7 = 0.84s 地点
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  // 左端から中央へ移動し、完全に表示される
+  100% {
+    // 例: 1.2s * 1.0 = 1.2s 地点
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.NextPageButton,
+.PreviousPageButton {
+  width: 146px;
+  height: 52px;
+  padding-top: 16px;
+  padding-right: 24px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  border-radius: 30px;
+  border: 1px solid #caccd3;
+  box-sizing: border-box;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 135%;
+  letter-spacing: 4%;
+  vertical-align: top;
+  text-align: center;
+  color: $main-color-dark_blue;
+  background-color: $base-color-white;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.5s ease;
+  z-index: 1;
+  overflow: hidden;
+
+  &:hover {
+    color: $base-color-white;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: right;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 30px;
+    background: $main-color-dark_blue;
+    z-index: -1;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  @media (max-width: 599px) {
+    display: none;
+  }
+}
+
+.works_postInfo {
+  color: $text-accent-gray;
+}
+
+.pageLink {
+  color: #6c6c6c;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 170%; /* 23.8px */
+  letter-spacing: 0.56px;
+  &:nth-of-type(n) {
+    padding-left: 32px;
+    @media (max-width: 420px) {
+      padding-left: 25px;
+    }
+  }
+
+  // &:not(:first-child){
+  //   padding-left: 32px;
+  // }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pageDots {
+  /* 1024px: 18px | 1920px: 18px */
+  font-size: clamp(16px, 1.172vw, 18px);
+  /* 1024px: 32px | 1920px: 32px */
+  padding-left: clamp(24px, 2.083vw, 32px);
+}
+
+.currentPage {
+  position: relative;
+  width: 40px;
+  height: 40px;
+
+  color: $base-color-white;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 170%; /* 23.8px */
+  &:after {
+    content: "";
+    position: absolute;
+    background: #6d758f;
+    top: 50%;
+    left: 17px;
+    width: 40px;
+    height: 40px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    z-index: -1;
+    @media (max-width: 420px) {
+      left: 9px;
+    }
+  }
+}
+
+// エラー・結果なし状態のスタイル
+.error,
+.noResults {
+  text-align: center;
+  /* 1024px: 60px | 1920px: 60px */
+  padding: clamp(40px, 3.906vw, 60px) 20px;
+  color: $main-color-dark_blue;
+
+  h2 {
+    /* 1024px: 24px | 1920px: 24px */
+    font-size: clamp(20px, 1.563vw, 24px);
+    margin-bottom: 16px;
+  }
+
+  p {
+    /* 1024px: 16px | 1920px: 16px */
+    font-size: clamp(14px, 1.042vw, 16px);
+    margin-bottom: 24px;
+  }
+}
+
+.errorDetails {
+  margin-top: 20px;
+  text-align: left;
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: monospace;
+    /* 1024px: 14px | 1920px: 14px */
+    font-size: clamp(12px, 0.913vw, 14px);
+  }
+}
+
+.homeLink,
+.retryLink {
+  display: inline-block;
+  /* 1024px: 12px 24px | 1920px: 12px 24px */
+  padding: clamp(10px, 0.781vw, 12px) clamp(20px, 1.563vw, 24px);
+  background: $main-color-blue;
+  color: $base-color-white;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background: $main-color-dark_blue;
+  }
+}
+
+/* 1920pxまでのclamp()に対応したため、1279pxのメディアクエリは実質不要になる場合があります */
+@media (max-width: 1920px) {
+  /* 1024pxから1920pxの間はclampが機能します。
+     もしこの範囲で特別なスタイル変更が必要な場合はここに記述します。 */
+}
+
+/* 1024px未満のブレークポイントはそのまま残します */
+@media (max-width: 1023.98px) {
+  /* clampの最小値が適用され始めます。
+     768px以下のスタイルをここに集約・上書きすることも可能です。 */
+}
+
+@media (max-width: 767px) {
+  .swiper-slide {
+    width: auto !important;
+
+    &:not(:first-child) {
+      margin-left: 15px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .work-footer {
+    padding: 15px 20px;
+  }
+
+  .work-link {
+    right: 20px;
+    bottom: 15px;
+  }
+}

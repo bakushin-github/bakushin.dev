@@ -1,0 +1,46 @@
+@use "../../../app/styles/variables.module" as *;
+
+.h2 {
+  padding-top: clamp(52px, 2.5vw + 44px, 128px);
+  max-width: clamp(1100px, 57.29vw + 916.67px, 1467px);
+  width: 100%;
+  color: $main-color-dark_blue;
+  margin-left: clamp(20px, 10.63vw + 6px, 227px);
+  @media (max-width:767px) {
+    margin-left: clamp(10.52px, calc(17.23vw - 44.62px), 87.5px);
+  }
+}
+
+.h2_subText {
+  position: relative;
+  font-family: "Noto Sans JP";
+  font-weight: 400;
+  font-size: clamp(11px, 0.19vw + 10.39px, 19px);
+  line-height: 170%;
+  letter-spacing: clamp(0.44px, 0.22vw + 0.37px, 4%);
+  padding-left: clamp(17px, 0.56vw + 15.2px, 35px);
+  color: $main-color-dark_blue;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    border: solid 2px $accent-color-red;
+    width: clamp(7px, 0.31vw + 6px, 16px);
+    height: clamp(7px, 0.31vw + 6px, 16px);
+    border-radius: 50px;
+    color: $accent-color-red;
+    transform: clamp(translateY(-50%), translateY(-37.5%), translateY(0%));
+  }
+}
+
+.h2_mainText {
+  margin-top: clamp(4px, 0%, 4px);
+  height: clamp(47px, 3.06vw + 37.2px, 128px);
+  margin-bottom: clamp(11.92px, 0%, 0px);
+  color: $main-color-dark_blue;
+  font-size: clamp(34.55px, 2.63vw + 26.13px, 76.62px);
+  font-family: "DM Sans";
+}

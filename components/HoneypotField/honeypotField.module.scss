@@ -1,0 +1,14 @@
+.honeypotField {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  
+  /* Ensuring the field is invisible but still works for form submissions */
+  input {
+    display: none;
+  }
+}

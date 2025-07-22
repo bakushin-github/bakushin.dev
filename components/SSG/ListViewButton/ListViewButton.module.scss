@@ -1,0 +1,66 @@
+@use "../../../app/styles/variables.module" as *;
+
+.listLink {
+}
+
+.ListViewButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: clamp(116px, 22.32vw + 44.57px, 131px);
+  height: clamp(46px, 1.34vw + 41.71px, 52px);
+  padding-top: 16px;
+  padding-right: 24px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  border-radius: 30px;
+  border: 1px solid #caccd3;
+  box-sizing: border-box;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-size: clamp(13px, 0.67vw + 10.86px, 16px);
+  line-height: 135%;
+  letter-spacing: 4%;
+  vertical-align: top;
+  text-align: center;
+  color: $main-color-dark_blue;
+  background-color: $base-color-white;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.5s ease;
+  z-index: 1;
+  overflow: hidden;
+  white-space: nowrap;
+
+  position: relative;
+  z-index: 2;
+  @media (max-width: 768px) {
+    width: 121px;
+    height: 48px;
+    font-size: 14px;
+  }
+
+  &:hover {
+    color: $base-color-white;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: right;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 30px;
+    background: $main-color-dark_blue;
+    z-index: -1;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}

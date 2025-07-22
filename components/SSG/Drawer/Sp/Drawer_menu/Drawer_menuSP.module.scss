@@ -1,0 +1,412 @@
+@use "../../../../../app/styles/variables.module" as *;
+
+// ========================================
+// Header部分のスタイル
+// ========================================
+// 省略（変更なし）
+.headerSp {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  z-index: 3;
+  max-width: 100vw;
+  font-family: "Noto Sans JP";
+  color: $text-black;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  display: none;
+
+  @include mq(sm) {
+    display: flex;
+  }
+  @include mq(xs) {
+    display: flex;
+  }
+}
+
+.headerSp__inner {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.headerSp__logo {
+  width: clamp(121.273px, calc(12.48vw + 74.44px), 170.18px);
+  height: clamp(34.19px, calc(3.52vw + 20.99px), 47.99px);
+  max-width: 100%;
+  // display: none;
+}
+
+.headerSp__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.headerAfter__drawerButton,
+.headerAfter__contact {
+  cursor: pointer;
+}
+
+.headerSP__drawerButton {
+  width: 44px;
+  height: 44px;
+}
+
+
+// ========================================
+// Drawer Menu部分のスタイル（既存のスタイルを統合）
+// ========================================
+.Drawer_menu {
+  position: fixed;
+  background-image: url("/Works/PC/Works_bg.webp");
+  background-size: cover;
+  z-index: 4;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-in-out;
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.Drawer_button {
+  position: absolute;
+  z-index: 4;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    top: clamp(16px, 1.93vw + 1.15px, 37.4px);
+    right: clamp(20px, 8.02vw - 41.59px, 114.2px);
+  }
+  
+  @media(max-width:767px){
+    width: 44px;
+    height: 44px;
+    top: 16px;
+    right: 20px;
+  }
+}
+
+.Drawer_flexLeft {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    width: clamp(330px, 25.37vw + 135.45px, 621.8px);
+  }
+
+  @media (max-width: 767px) {
+    min-width: 0;
+    width: clamp(83.05px, 31.38vw - 34.61px, 230px);
+  }
+}
+
+// ========================================
+// PC用装飾要素 (768px以上で表示)
+// ========================================
+.Drawer_menu__1, .Drawer_menu__2, .Drawer_menu__3, .Drawer_menu__logo {
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.Drawer_menu__1 {
+  position: absolute;
+  animation-name: y-loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+  @media (min-width: 768px) {
+    top: clamp(55.11px, 4.23vw + 22.62px, 103.8px);
+    left: clamp(15.09px, 1.16vw + 6.17px, 28.4px);
+  }
+}
+
+.Drawer_menu__2 {
+  position: absolute;
+  animation-name: y-loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+  @media (min-width: 768px) {
+    top: clamp(90.86px, 6.98vw + 37.38px, 171.1px);
+    left: clamp(253.22px, 19.45vw + 104.01px, 476.9px);
+  }
+}
+
+.Drawer_menu__3 {
+  position: absolute;
+  animation-name: y--loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+  @media (min-width: 768px) {
+    bottom: 0;
+    left: clamp(179.13px, 13.75vw + 73.57px, 337.3px);
+    width: clamp(183.7px, 14.11vw + 75.46px, 345.9px);
+    height: auto;
+  }
+}
+
+.Drawer_menu__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+// ========================================
+// SP用装飾要素 (767px以下で表示)
+// ========================================
+.Drawer_menu__1Sp, .Drawer_menu__2Sp, .Drawer_menu__3Sp, .Drawer_menu__logoSp {
+   @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.Drawer_menu__1Sp {
+  position: absolute;
+  animation-name: y-loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+
+  @media (max-width: 767px) {
+    top: 43.28px;
+    left: -65.28PX;
+   width: clamp(117.13px, 10.556vw + 80.132px, 169px);
+height: clamp(117.13px, 10.556vw + 80.132px, 169px);
+  }
+}
+.Drawer_menu__2Sp{
+  position: absolute;
+  animation-name: y-loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+
+  @media (max-width: 767px) {
+    top: clamp(159.26px, 17.55vw + 93.45px, 250px);
+    left: clamp(19.29px, 28.24vw - 86.63px, 160px);
+ width: clamp(127.58px, 10.556vw + 88px, 169px);
+height: clamp(127.58px, 10.556vw + 88px, 169px);
+  }
+}
+.Drawer_menu__3Sp{
+  position: absolute;
+  animation-name: y--loop;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  opacity: 0.3;
+  filter: blur(2.5px);
+
+  @media (max-width: 767px) {
+    top: clamp(586.84px, -1.73vw + 592.39px, 580px);
+    left: clamp(13.68px, 19.13vw - 47.95px, 108px);
+ width: clamp(176.27px, 21.333vw + 107.97px, 260px);
+height: clamp(176.27px, 21.333vw + 107.97px, 260px);
+  }
+}
+
+@keyframes y-loop {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes y--loop {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(20px); }
+  100% { transform: translateY(0); }
+}
+
+.Drawer_menu__logoSp {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  @media (max-width: 767px) {
+    top: 31%;
+     width: clamp(54.61px, 13.33vw + 11.95px, 64px);
+    height: clamp(143.37px, 35vw + 31.37px, 168px);
+  }
+}
+
+.Drawer_flexRight {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex: 1;
+
+  @media (min-width: 768px) {
+    width: clamp(438px, 74.26vw - 132.28px, 1293.5px);
+    align-items: stretch;
+  }
+
+  @media (max-width: 767px) {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.Drawer_menu__boxInner {
+  background: $base-color-off_white;
+  margin: 0;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 118px;
+    padding-bottom: 118px;
+    width: 100%;
+    height: 100%;
+    padding-inline: clamp(100px, 10.86vw + 16.6px, 225.1px);
+  }
+  
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    padding-top: 118px;
+    padding-bottom: 118px;
+    width: 100%; 
+    height: 100%;
+    /* ★変更点：375pxで30px、767pxで110pxになるようclamp()で可変に修正 */
+    padding-inline: clamp(30px, 20.41vw - 46.53px, 110px);
+  }
+
+    @media (max-width:400px) {
+    padding-top: 150px;
+    box-sizing: border-box;
+  }
+}
+
+.Drawer_menu__List {
+  list-style: none;
+  padding: 0;
+}
+
+.Drawer_menu__list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.5px solid #adaeae;
+  font-family: "Noto Sans JP";
+  
+  @media (min-width: 768px) {
+    width: clamp(238px, 25.6vw + 41.43px, 532.85px);
+    height: 61px;
+    font-size: clamp(18px, 0.59vw + 13.47px, 23.3px);
+    font-weight: 400;
+    line-height: 170%;
+    letter-spacing: 3%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  @media(max-width:767px ){
+    width: 100%;
+    height: 50px;
+    color: var(--black, #282828);
+    text-align: center;
+    font-size: clamp(15.49px, 0.51vw + 13.86px, 18px);
+    letter-spacing: 0.48px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+    @media (max-width:400px) {
+        box-sizing: border-box;
+padding-block: 30px;
+  }
+}
+
+/* ===============================================================
+   ★ここから下が修正箇所です★
+   =============================================================== */
+
+.Drawer_menu__buttons {
+  display: flex;
+  
+  /* ★変更点：横並びになる画面幅を 861px 以上に修正 */
+  @media (min-width: 861px) {
+    gap: 20px;
+    margin-top: clamp(30px, 3.86vw + 0.23px, 74.3px);
+    transform: translateX(clamp(-29.16px, -2.53vw + 19.42px, 0px));
+  }
+
+  /* ★変更点：縦並びになる画面幅を 860px 以下に修正 */
+  @media(max-width: 860px){
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    transform: none;
+    gap: 20px;
+  }
+}
+
+.Drawer_menu__faq, .Drawer_menu__contact {
+  box-sizing: border-box !important;
+  width: 212px !important;
+  height: 64px !important;
+  max-width: 212px !important;
+  max-height: 64px !important;
+}
+
+.Drawer_menu__faq {
+  color: $main-color-blue !important;
+  border-radius: 32px !important;
+  border: solid 1px $main-color-blue !important;
+  background: transparent !important;
+  padding: 16px 40px !important;
+
+  /* ★変更点：ブレークポイントを860pxに変更し、clamp()の値を320px-860pxの範囲で再計算 */
+  @media (max-width: 860px) {
+    width: clamp(206.96px, 0.93vw + 203.97px, 212px) !important;
+    height: clamp(53.96px, 1.86vw + 48.01px, 64px) !important;
+  }
+}
+
+.Drawer_menu__contact {
+  cursor: pointer;
+  
+  /* ★変更点：ブレークポイントを860pxに変更し、clamp()の値を320px-860pxの範囲で再計算 */
+  @media (max-width: 860px) {
+    width: clamp(206.96px, 0.93vw + 203.97px, 212px);
+    height: clamp(53.96px, 1.86vw + 48.01px, 64px);
+  }
+}
+
+.headerSp {
+  display: none;
+  
+  @include mq(sm) {
+    display: flex;
+  }
+  
+  // 768px専用ルール追加
+  @media screen and (max-width: 767px) {
+    display: flex;
+  }
+}

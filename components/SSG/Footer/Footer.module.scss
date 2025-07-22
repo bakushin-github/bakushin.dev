@@ -1,0 +1,18 @@
+@use "../../../app/styles/variables.module" as *;
+
+.footer {
+  font-family: "Inter", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.75rem, 0.679rem + 0.36vw, 1rem);
+  line-height: 170%;
+  letter-spacing: 0%;
+  text-align: center;
+  color: $base-color-white;
+  background-color: $text-black;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;//Sidebarと重なるので回避目的
+}

@@ -1,0 +1,32 @@
+{
+  "name": "bakushins-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@hookform/resolvers": "^5.0.1",
+    "classnames": "^2.5.1",
+    "framer-motion": "^12.19.1",
+    "googleapis": "^148.0.0",
+    "graphql": "^16.11.0",
+    "next": "^15.2.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.4",
+    "swiper": "^11.2.6",
+    "zod": "^3.25.20"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@netlify/next": "^1.4.9",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.4",
+    "sass": "^1.86.0"
+  }
+}

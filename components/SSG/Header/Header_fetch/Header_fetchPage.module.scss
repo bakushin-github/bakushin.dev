@@ -1,0 +1,67 @@
+@use "../../../../app/styles/variables.module" as *;
+
+.header {
+  position: fixed;
+  z-index: 3;
+  width: 100%;
+  padding: 29px 72px;
+  color: $text-black;
+  font-family: "Noto Sans JP";
+  // 背景を擬似要素で敷く
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0; // top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 1); // ← ここで透明感調整
+    z-index: -1;
+  }
+  nav{
+    background: $base-color-white;
+    padding: 50px;
+    padding-bottom: 29px;
+    border-radius: 16px;
+    transform: translateY(-50px);
+  }
+  ul {
+    list-style-type: none;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 170%;
+    letter-spacing: 3%;
+    &:first-child{
+      padding-left: 0;
+    }
+  }
+}
+
+.header__inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__logo {
+  max-width: 170.18px;
+  max-height: 47.99px;
+  width: 100%;
+}
+
+.header__nav {
+  position: absolute;
+  display: flex;
+  gap: 40px;
+  max-height: 52px;
+  align-items: center;
+ width: 633px;
+ left: calc(100vw - 705px);
+}
+
+.header__nav-list {
+  display: flex;
+  gap: 32px;
+}
+
+.header__contact{
+  &:hover{
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,39 @@
+@use "../../../app/styles/variables.module" as *;
+
+
+.contact__button {
+  background: $accent-color-red;
+  border: none;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 2px 10px #19213D0D;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 4%;
+  text-align: center;
+  justify-content: center;
+  max-width: 163px;
+  max-height: 52px;
+  border-radius: 30px;
+  padding-top: 16px;
+  padding-right: 24px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  gap: 8px;
+  color: $base-color-white;
+  img {
+    width: 20px;
+    height: 20px;
+    top: 6.25px;
+    left: 4.38px;
+    border-width: 1px;
+  }
+  // @media (max-width:767px) {
+  //   font-size: 14px;
+  // }
+}
+
