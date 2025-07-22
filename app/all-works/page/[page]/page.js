@@ -572,7 +572,6 @@ export default async function WorksPage({ params }) {
             </Link>
           </div>
         </main>
-        <Cta />
       </div>
     );
   }
