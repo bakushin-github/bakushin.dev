@@ -339,7 +339,6 @@ export default async function WorksPage() {
             </details>
           </div>
         </main>
-        <Cta />
       </div>
     );
   }
