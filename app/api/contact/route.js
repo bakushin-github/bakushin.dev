@@ -19,15 +19,29 @@ export async function POST(request) {
       );
     }
 
-    // reCAPTCHAの検証
-    const recaptchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`,
-      { method: "POST" }
-    );
+    // パラメータをURLエンコード形式で組み立てる
+    const params = new URLSearchParams();
+    params.append("secret", secretKey);
+    params.append("response", recaptchaToken);
+
+    // GoogleへPOST
+    const recaptchaResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
     
     const recaptchaResult = await recaptchaResponse.json();
+
+    if (process.env.NODE_ENV !== "production") {
+  console.log("reCAPTCHA 検証成功：score =", recaptchaResult.score);
+}
+
+
     
-    if (!recaptchaResult.success) {
+    if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
       return NextResponse.json(
         { success: false, message: "reCAPTCHAの検証に失敗しました" },
         { status: 400 }

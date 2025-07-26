@@ -22,7 +22,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <head>
         {/* index メタタグ（デフォルト設定） */}
         <meta name="robots" content="index, follow" />
