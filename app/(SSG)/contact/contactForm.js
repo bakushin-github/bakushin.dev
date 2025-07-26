@@ -62,6 +62,7 @@ export default function ContactForm() {
 
       // 2. reCAPTCHA検証
       const token = await executeRecaptcha("submit_contact");
+      console.log("reCAPTCHA トークン:", token); 
       if (!token) {
         setSubmitError("セキュリティ検証に失敗しました。再度お試しください。");
         setIsSubmitting(false);
