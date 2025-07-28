@@ -1,73 +1,72 @@
 @use "../../../styles/variables.module.scss" as *;
 
-.thanks{
+.thanks {
   width: 100vw;
   height: calc(100vh - 60px);
-position: relative;
-overflow: hidden;
+  position: relative;
+  overflow: hidden;
   background-color: rgba(255, 255, 255, 0.95);
 }
 
 .Bread {
   position: absolute;
-top: clamp(97.9px, calc(3.7568vw + 85.912px), 158.0px);
+  top: clamp(97.9px, calc(3.7568vw + 85.912px), 158px);
   left: clamp(20px, 5vw + 10px, 170px);
 }
 
-.left_1stLine,.left_2ndLine,.right_2ndLine,.right_polygon1,.right_polygon2{
+.left_1stLine,
+.left_2ndLine,
+.right_2ndLine,
+.right_polygon1,
+.right_polygon2 {
   position: absolute;
 }
 
-.left_1stLineParent{
+.left_1stLineParent {
   position: absolute;
-top:clamp(-437px, 94.43px - 36.90vw, -189px);
-z-index: -1;
-width: clamp(234.13px, -0.01px + 30.49vw, 439px);
-height: clamp(301.33px, -0.01px + 39.24vw, 565px);
-@media (max-width:767px) {
-  left: clamp(-3.42px, -5.87px + 0.77vw, 0.00px);
-top: clamp(-135.00px, 80.23px - 28.06vw, -9.57px);
-width: clamp(260.80px, 186.36px + 23.27vw, 364.80px);
-height: clamp(370.43px, 264.72px + 33.04vw, 518.10px);
-}
-}
-
-.left_2ndLineParent{
-  position: absolute;
-bottom: clamp(-125px, 35.71px - 11.16vw, -50px);
-left: clamp(-77px, -149.00px + 9.38vw, -14px);
+  top: clamp(-437px, 94.43px - 36.9vw, -189px);
   z-index: -1;
-width: clamp(291.73px, -155.47px + 60.62vw, 547px);
-height: clamp(186.67px, -99.58px + 38.84vw, 350px);
-@media (max-width:767px) {
-width: clamp(320.51px, 0.1396vw + 322.66px, 382.9px);
-height: clamp(205.09px, 0.0893vw + 206.87px, 245px);
-bottom: -50px; /* 固定 */
-left: 0px;     /* 固定 */
-
+  width: clamp(234.13px, -0.01px + 30.49vw, 439px);
+  height: clamp(301.33px, -0.01px + 39.24vw, 565px);
+  @media (max-width: 767px) {
+    left: clamp(-3.42px, -5.87px + 0.77vw, 0px);
+    top: clamp(-135px, 80.23px - 28.06vw, -9.57px);
+    width: clamp(260.8px, 186.36px + 23.27vw, 364.8px);
+    height: clamp(370.43px, 264.72px + 33.04vw, 518.1px);
+  }
 }
+
+.left_2ndLineParent {
+  position: absolute;
+  bottom: clamp(-125px, 35.71px - 11.16vw, -50px);
+  left: clamp(-77px, -149px + 9.38vw, -14px);
+  z-index: -1;
+  width: clamp(291.73px, -155.47px + 60.62vw, 547px);
+  height: clamp(186.67px, -99.58px + 38.84vw, 350px);
+  @media (max-width: 767px) {
+    width: clamp(320.51px, 0.1396vw + 322.66px, 382.9px);
+    height: clamp(205.09px, 0.0893vw + 206.87px, 245px);
+    bottom: -50px; /* 固定 */
+    left: 0px; /* 固定 */
+  }
 }
 
-.right_2ndParent{
+.right_2ndParent {
   position: absolute;
   top: 29%;
-right: clamp(-138.5px, -395.53px + 33.47vw, 86.4px);
- width: clamp(486.4px, 18.1vw + 347.39px, 608px);
+  right: clamp(-138.5px, -395.53px + 33.47vw, 86.4px);
+  width: clamp(486.4px, 18.1vw + 347.39px, 608px);
   height: clamp(690.82px, 25.7vw + 493.44px, 863.525px);
-z-index: -1;
-@media (max-width:767px) {
-display: none;
-}
-}
-
-
-
-.thanksHeader{
-
+  z-index: -1;
+  @media (max-width: 767px) {
+    display: none;
+  }
 }
 
+.thanksHeader {
+}
 
-.thanks404{
+.thanks404 {
   font-family: "DM Sans";
   font-weight: 600;
   font-size: clamp(34.55px, 26.14px + 2.63vw, 76.62px);
@@ -79,27 +78,27 @@ display: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #272E85
+  color: #272e85;
 }
 
-.thanksP{
+.thanksP {
   font-family: "Noto Sans JP";
-font-weight: 400;
-font-size: clamp(13.90px, 13.30px + 0.19vw, 16.90px);
-line-height: 180%;
-letter-spacing: 0%;
-text-align: center;
-margin-top: clamp(47.59px, 45.18px + 0.75vw, 59.61px);
-margin-bottom: 0;
-padding-inline: 20px;
-@media (max-width:370px) {
-  font-size: 12px;
-}
+  font-weight: 400;
+  font-size: clamp(13.9px, 13.3px + 0.19vw, 16.9px);
+  line-height: 180%;
+  letter-spacing: 0%;
+  text-align: center;
+  margin-top: clamp(47.59px, 45.18px + 0.75vw, 59.61px);
+  margin-bottom: 0;
+  padding-inline: 20px;
+  @media (max-width: 370px) {
+    font-size: 12px;
+  }
 }
 
-.thanksAttention{
-color: $accent-color-red;
-text-align: center;
-font-size: clamp(13.90px, 13.30px + 0.19vw, 16.90px);;
-padding-inline: 20px;
+.thanksAttention {
+  color: $accent-color-red;
+  text-align: center;
+  font-size: clamp(13.9px, 13.3px + 0.19vw, 16.9px);
+  padding-inline: 20px;
 }
