@@ -69,6 +69,25 @@ export default function ContactForm() {
         return;
       }
 
+      // ✅ 🔽 ここでAPI呼び出し（バックエンドでスコア検証）
+const verifyRes = await fetch("/api/contact", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    recaptchaToken: token
+  })
+});
+
+const verifyData = await verifyRes.json();
+if (!verifyRes.ok || !verifyData.success) {
+  console.error("スコア検証失敗 or スパム判定:", verifyData);
+  setSubmitError("スパム検知の可能性があります。再度お試しください。");
+  setIsSubmitting(false);
+  return;
+}
+
       // 3. すべてのチェックを通過したらSSGformに送信
       await submitToSSGForm(data, token);
       
