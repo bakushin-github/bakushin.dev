@@ -76,7 +76,7 @@ const verifyRes = await fetch("/api/contact", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    recaptchaToken: token
+     token
   })
 });
 
