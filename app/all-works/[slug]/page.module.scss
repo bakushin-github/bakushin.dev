@@ -17,10 +17,10 @@
     padding-inline: 0;
   }
 
-a{
-  color: $main-color-blue;
-  text-decoration: underline;
-}
+  a {
+    color: $main-color-blue;
+    text-decoration: underline;
+  }
 }
 
 .work__h2 {
@@ -213,7 +213,7 @@ a{
     font-size: clamp(10px, 7.273vw - 13.273px, 13.6px);
     letter-spacing: 0%;
     margin-bottom: clamp(51px, 5vw, 96px);
-    @media (max-width:767px) {
+    @media (max-width: 767px) {
       margin-bottom: 48px;
     }
     @media (min-width: 370px) {
