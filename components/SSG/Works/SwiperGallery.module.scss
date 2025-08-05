@@ -13,21 +13,19 @@
 
 .worksContents {
   position: relative;
-  // 375px: 21px, 1440px: 190px (320pxは21pxで固定)
   padding-left: clamp(1.3125rem, -2.4067rem + 15.8685vw, 11.875rem);
-  // SPでは右側にも余白を設定
   padding-right: 20px;
-margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
+  margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
+  
   @media (min-width: 769px) {
-    padding-right: 0; // PCでは右余白は不要
+    padding-right: 0;
   }
 
-    @media (max-width:767px) {
+  @media (max-width:767px) {
     padding-left: clamp(10.52px, calc(17.23vw - 44.62px), 87.5px);
     padding-right: 0;
   }
 
-  // :globalセレクタはCSS Modulesエラー回避のため、この中に記述
   :global(.swiper-slide) {
     width: auto !important;
   }
@@ -37,14 +35,8 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
 .navigationContainer {
   display: flex;
   align-items: center;
-  justify-content: center; // 全体を中央寄せ
-
-  // 【修正】スライダーとボタンの間の距離をclampで設定
-  // 1440px: 40px, 375px: 32px
+  justify-content: center;
   margin-top: clamp(2rem, 1.81rem + 0.75vw, 2.5rem);
-  
-  // 【修正】320pxでの見切れを防ぐため調整
-  // 320px: translateX(20px), 375px: translateX(37px), 1440px: translateX(419px)
   transform: translateX(clamp(1.25rem, -8.44rem + 30.47vw, 26.1875rem));
 }
 
@@ -52,9 +44,7 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
 .arrowButtons {
   display: flex;
   align-items: center;
-  // 【修正】矢印ボタン間のgapは16px固定
   gap: 16px;
-  //【修正】PC/SP共通で、矢印ボタン群と「一覧」ボタンの間に32pxのgapを設定
   margin-right: 32px;
 }
 
@@ -71,7 +61,12 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease;
-  flex-shrink: 0; // ボタンが縮まないように
+  flex-shrink: 0;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   &::after {
     content: "";
@@ -82,16 +77,19 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
     border-left: 2px solid $base-color-white;
     transition: border-color 0.3s ease;
   }
-  &:hover {
+  
+  &:hover:not(:disabled) {
     background-color: $base-color-white;
     &::after {
       border-color: $main-color-dark_blue;
     }
   }
 }
+
 .swiperButtonPrev::after {
   transform: translateX(1px) rotate(-45deg);
 }
+
 .swiperButtonNext::after {
   transform: translateX(-1px) rotate(135deg);
 }
@@ -110,20 +108,53 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
   &:hover {
     .title {
       &::after {
-        animation: titleLine 0.8s ease-in-out;
+        animation: titleLine 0.8s ease-in-out forwards;
         opacity: 1;
       }
     }
+    
     .worksLink {
-      background-position: 0% 0; // グラデーションを左から表示
+      background-position: 0% 0;
       
       &::before {
-        // ホバー時の初期変化（矢印の色と背景）
-        background-color: transparent; // 親のグラデーションが見えるように
-        background-image: url("../../../public/Works/PC/ArrowWhite.webp"); // 白い矢印に変更
-        // 矢印の連続アニメーションを適用
-        // titleLineと同時に終了するため: 0.8s - 0.4s = 0.4s
+        background-color: transparent;
+        background-image: url("../../../public/Works/PC/ArrowWhite.webp");
         animation: arrow-cycle 0.4s ease-in-out 0.4s forwards;
+      }
+    }
+  }
+}
+
+// クリック時の追加スタイル
+.work-imageLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  
+  &.cardClicked {
+    .workCard {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+    
+    .title {
+      &::after {
+        animation: titleLine 0.8s ease-in-out forwards;
+        opacity: 1;
+      }
+    }
+    
+    .worksLink {
+      background-position: 0% 0;
+      
+      &::before {
+        background-color: transparent;
+        background-image: url("../../../public/Works/PC/ArrowWhite.webp");
+        animation: arrow-cycle 0.8s ease-in-out forwards;
+      }
+      
+      &.clicked::before {
+        animation: arrow-cycle 0.8s ease-in-out forwards;
       }
     }
   }
@@ -137,20 +168,15 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
 
 .workCategory {
   position: absolute;
-  // 320px: 14px, 375px: 15px, 1440px: 16px, 1920px: 17px
   top: clamp(0.875rem, 0.8375rem + 0.1875vw, 1.0625rem);
-  // 320px: 14px, 375px: 15px, 1440px: 16px, 1920px: 17px
   right: clamp(0.875rem, 0.8375rem + 0.1875vw, 1.0625rem);
   background: $base-color-white;
   color: $main-color-dark_blue;
-  // 320px: 8.5px, 375px: 9.36px, 1440px: 10px, 1920px: 10.5px
   padding: clamp(0.5313rem, 0.5062rem + 0.125vw, 0.6563rem);
   font-size: clamp(13.06px, calc(0.084vw + 12.79px), 14.4px);
   font-weight: 600;
   z-index: 2;
-  // 320px: 2.5px, 375px: 2.809px, 1440px: 3px, 1920px: 3.2px
   border-radius: clamp(0.1563rem, 0.1475rem + 0.0438vw, 0.2rem);
-  // 320px: 0.85px, 375px: 0.936px, 1440px: 1px, 1920px: 1.05px
   border: clamp(0.0531rem, 0.0506rem + 0.0125vw, 0.0656rem) solid #CACCD3;
   box-shadow: 0px 1px 10px 0px rgba(25, 33, 61, 0.20);
 }
@@ -180,9 +206,20 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
       opacity: 0;
       transition: opacity 0.3s ease;
     }
+    
+    // アニメーションクラス用のスタイル
+    &.animate::after {
+      animation: titleLine 0.8s ease-in-out forwards;
+      opacity: 1;
+    }
   }
   
-  .skill { margin: 0; font-size: 14px; color: #666; margin-bottom: 8px; }
+  .skill { 
+    margin: 0; 
+    font-size: 14px; 
+    color: #666; 
+    margin-bottom: 8px; 
+  }
 }
 
 .listLink {
@@ -195,22 +232,13 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
 
 /* 一覧を見るボタン */
 .ListViewButton {
-  // 320px: 110px, 375px: 121px, 1440px: 131px
   width: clamp(6.875rem, 5.875rem + 3.125vw, 8.1875rem);
-  // 320px: 44px, 375px: 48px, 1440px: 52px  
   height: clamp(2.75rem, 2.25rem + 1.5625vw, 3.25rem);
-  // 320px: 13px, 375px: 14px, 1440px: 16px
   font-size: clamp(0.8125rem, 0.6875rem + 0.3906vw, 1rem);
-  
-  // 320px: 15.5px, 375px: 16px, 1440px: 16px
   padding-top: clamp(0.96875rem, 0.9375rem + 0.0977vw, 1rem);
-  // 320px: 21px, 375px: 24px, 1440px: 24px
   padding-right: clamp(1.3125rem, 1.125rem + 0.5859vw, 1.5rem);
-  // 320px: 15.5px, 375px: 16px, 1440px: 16px
   padding-bottom: clamp(0.96875rem, 0.9375rem + 0.0977vw, 1rem);
-  // 320px: 21px, 375px: 24px, 1440px: 24px
   padding-left: clamp(1.3125rem, 1.125rem + 0.5859vw, 1.5rem);
-  
   border-radius: 30px;
   border: 1px solid #caccd3;
   box-sizing: border-box;
@@ -224,12 +252,18 @@ margin-top: clamp(31px, calc(2.25vw + 23.8px), 67px);
   background-color: $base-color-white;
   position: relative;
   cursor: pointer;
-  transition: color 0.5s ease;
+  transition: color 0.5s ease, opacity 0.3s ease;
   z-index: 1;
   overflow: hidden;
-white-space: nowrap;
-  &:hover{
+  white-space: nowrap;
+  
+  &:hover:not(:disabled) {
     color: $base-color-white;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 
   &::before {
@@ -247,9 +281,20 @@ white-space: nowrap;
     transition: transform 0.5s ease;
   }
 
-  &:hover::before {
+  &:hover:not(:disabled)::before {
     transform: scaleX(1);
     transform-origin: left;
+  }
+  
+  &.listClicked {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+    
+    &::before {
+      transform: scaleX(1);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
   }
 }
 
@@ -263,77 +308,60 @@ white-space: nowrap;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; // はみ出した要素をクリップするために重要
-  // グラデーションボーダーのための余白
+  overflow: hidden;
   padding: 1px;
-  // 背景グラデーション（ホバーで表示される部分）
   background: linear-gradient(282.13deg, #366195 10.86%, #333398 77.59%);
-  background-size: 200% 100%; // アニメーションのために幅を2倍に
-  background-position: 100% 0; // 初期状態ではグラデーションの左側を隠す
-  transition: background-position 0.4s ease-in-out; // グラデーションの出現アニメーション
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.4s ease-in-out;
   
-  // 矢印アイコンと内側背景のコンテナ
   &::before {
     content: "";
-    display: block; // transformとサイズ指定のため
-    width: 100%; // 親要素のpadding領域いっぱいに広がる
-    height: 100%; // 親要素のpadding領域いっぱいに広がる
-    background-color: $base-color-white; // 通常時の背景色
-    background-image: url("../../../public/Works/PC/ArrowBlue.webp"); // 通常時の矢印
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: $base-color-white;
+    background-image: url("../../../public/Works/PC/ArrowBlue.webp");
     background-size: 18px;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 7px; // 親要素のradiusより少し小さくして内側感を出す
-    // 初期状態とホバー解除時のためのトランジション
-    // transform と opacity はアニメーション終了後にスムーズに戻るように
+    border-radius: 7px;
     transition: background-color 0.4s ease-in-out,
-      background-image 0.4s ease-in-out, transform 0.3s ease-out,
-      // ホバー解除時の戻りアニメーション
-      opacity 0.3s ease-out; // ホバー解除時の戻りアニメーション
-    // アニメーションのための初期transformとopacity
+      background-image 0.4s ease-in-out, 
+      transform 0.3s ease-out,
+      opacity 0.3s ease-out;
     transform: translateX(0%);
     opacity: 1;
+  }
+  
+  &.clicked::before {
+    animation: arrow-cycle 0.8s ease-in-out forwards;
   }
 }
 
 // 矢印の連続アニメーションのキーフレーム
 @keyframes arrow-cycle {
-  // アニメーション開始時 (白い矢印が中央にある状態)
   0% {
     transform: translateX(0%);
     opacity: 1;
   }
-  // --- Phase 1: 右へ移動して消える ---
-  // (アニメーション全体の 0% から 50% を使用)
-  // 少し中央で待機
   20% {
-    // 例: 1.2s * 0.2 = 0.24s 地点
     transform: translateX(0%);
     opacity: 1;
   }
-  // 右端へ移動し、完全に透明になる
   50% {
-    // 例: 1.2s * 0.5 = 0.6s 地点
-    transform: translateX(100%); // 要素の幅分、右へ移動
+    transform: translateX(100%);
     opacity: 0;
   }
-  // --- Phase 2: 左から出現して中央へ移動 ---
-  // (アニメーション全体の 50% から 100% を使用)
-  // 右で消えた直後、瞬時に左端へ移動 (まだ透明)
   50.01% {
-    // ほぼ50%と同時
-    transform: translateX(-100%); // 要素の幅分、左へ移動
-    opacity: 0;
-  }
-  // 左端で少し待機 (まだ透明)
-  70% {
-    // 例: 1.2s * 0.7 = 0.84s 地点
     transform: translateX(-100%);
     opacity: 0;
   }
-  // 左端から中央へ移動し、完全に表示される
+  70% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
   100% {
-    // 例: 1.2s * 1.0 = 1.2s 地点
     transform: translateX(0%);
     opacity: 1;
   }

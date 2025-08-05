@@ -272,6 +272,8 @@ height: clamp(125.07px, 23.90vw, 293.12px);
     width: 100%;
     height: auto;
     display: block;
+        filter: saturate(1.1) contrast(1.05) brightness(1.02) !important;
+    image-rendering: crisp-edges;
   }
 
   // PC用画像
@@ -371,6 +373,18 @@ height: clamp(125.07px, 23.90vw, 293.12px);
     margin-top: 1.5%;
     font-size: clamp(16px, calc(0.62vw + 13.7px), 20px);
     letter-spacing: 0.6px;
+  }
+  @media (max-width: 599px) {
+    margin-top: 1.5%;
+    font-size: clamp(16px, calc(0.62vw + 13.7px), 20px);
+    letter-spacing: 0.6px;
+    width: 375px;
+  }
+  @media (max-width: 370px) {
+    margin-top: 1.5%;
+    font-size: 14px;
+    letter-spacing: 0.6px;
+    width: 375px;
   }
   @media (min-width: 1024px) {
     display: none;
