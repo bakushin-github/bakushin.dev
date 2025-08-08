@@ -7,9 +7,20 @@ import styles from "./FV.module.scss";
 import { useLoadingContext } from "@/components/Loading/ClientWrapper";
 import Header_Sp from "../Drawer/Sp/Drawer_menu/Drawer_menuSP.js";
 
+// 開発環境でのみログを出力
+const log = (msg, data) => {
+  if (process.env.NODE_ENV === 'development') {
+    if (data !== undefined) {
+      console.log(msg, data);
+    } else {
+      console.log(msg);
+    }
+  }
+};
+
 function Fv() {
   const { shouldTriggerAnimation, isLoadingComplete } = useLoadingContext();
-  console.log(
+  log(
     "LOG: Fv component rendered (REVISED VERSION). shouldTriggerAnimation:",
     shouldTriggerAnimation,
     "isLoadingComplete:",
@@ -55,7 +66,7 @@ function Fv() {
     fv__text: false,
   });
 
-  console.log(
+  log(
     "LOG: Current State Flags - aElementsComplete:",
     aElementsComplete,
     "bElementsComplete:",
@@ -63,13 +74,13 @@ function Fv() {
     "imageTextAnimationComplete:",
     imageTextAnimationComplete
   );
-  console.log("LOG: Current aElementsStatus:", JSON.stringify(aElementsStatus));
-  console.log("LOG: Current bElementsStatus:", JSON.stringify(bElementsStatus));
-  console.log("LOG: Current imageTextStatus:", JSON.stringify(imageTextStatus));
+  log("LOG: Current aElementsStatus:", JSON.stringify(aElementsStatus));
+  log("LOG: Current bElementsStatus:", JSON.stringify(bElementsStatus));
+  log("LOG: Current imageTextStatus:", JSON.stringify(imageTextStatus));
 
   // A要素の完了を監視
   useEffect(() => {
-    console.log(
+    log(
       "LOG: useEffect for aElementsStatus triggered. Current aElementsStatus:",
       JSON.stringify(aElementsStatus),
       "shouldTriggerAnimation:",
@@ -80,7 +91,7 @@ function Fv() {
     );
     if (allAElementsCompleted && shouldTriggerAnimation) {
       if (!aElementsComplete) {
-        console.log(
+        log(
           "LOG: All A elements reported complete AND shouldTriggerAnimation is true. Setting aElementsComplete to true."
         );
         setAElementsComplete(true);
@@ -90,7 +101,7 @@ function Fv() {
 
   // B要素の完了を監視
   useEffect(() => {
-    console.log(
+    log(
       "LOG: useEffect for bElementsStatus triggered. Current bElementsStatus:",
       JSON.stringify(bElementsStatus),
       "shouldTriggerAnimation:",
@@ -101,7 +112,7 @@ function Fv() {
     );
     if (allBElementsCompleted && shouldTriggerAnimation) {
       if (!bElementsComplete) {
-        console.log(
+        log(
           "LOG: All B elements reported complete AND shouldTriggerAnimation is true. Setting bElementsComplete to true."
         );
         setBElementsComplete(true);
@@ -111,7 +122,7 @@ function Fv() {
 
   // Image/Text要素の完了を監視
   useEffect(() => {
-    console.log(
+    log(
       "LOG: useEffect for imageTextStatus triggered. Current imageTextStatus:",
       JSON.stringify(imageTextStatus),
       "shouldTriggerAnimation:",
@@ -122,7 +133,7 @@ function Fv() {
     );
     if (allImageTextElementsCompleted && shouldTriggerAnimation) {
       if (!imageTextAnimationComplete) {
-        console.log(
+        log(
           "LOG: All Image/Text elements reported complete AND shouldTriggerAnimation is true. Setting imageTextAnimationComplete to true."
         );
         setImageTextAnimationComplete(true);
@@ -168,13 +179,13 @@ function Fv() {
 
   // A要素の完了ハンドラ
   const handleAElementComplete = (elementName) => {
-    console.log(
+    log(
       `LOG: handleAElementComplete called for: ${elementName}. shouldTriggerAnimation: ${shouldTriggerAnimation}`
     );
     if (shouldTriggerAnimation) {
       setAElementsStatus((prev) => {
         const newState = { ...prev, [elementName]: true };
-        console.log(
+        log(
           `LOG: handleAElementComplete - ${elementName}: New aElementsStatus will be:`,
           JSON.stringify(newState)
         );
@@ -185,13 +196,13 @@ function Fv() {
 
   // B要素の完了ハンドラ
   const handleBElementComplete = (elementName) => {
-    console.log(
+    log(
       `LOG: handleBElementComplete called for: ${elementName}. shouldTriggerAnimation: ${shouldTriggerAnimation}`
     );
     if (shouldTriggerAnimation) {
       setBElementsStatus((prev) => {
         const newState = { ...prev, [elementName]: true };
-        console.log(
+        log(
           `LOG: handleBElementComplete - ${elementName}: New bElementsStatus will be:`,
           JSON.stringify(newState)
         );
@@ -202,13 +213,13 @@ function Fv() {
 
   // Image/Text要素の完了ハンドラ
   const handleImageTextComplete = (elementName) => {
-    console.log(
+    log(
       `LOG: handleImageTextComplete called for: ${elementName}. shouldTriggerAnimation: ${shouldTriggerAnimation}`
     );
     if (shouldTriggerAnimation) {
       setImageTextStatus((prev) => {
         const newState = { ...prev, [elementName]: true };
-        console.log(
+        log(
           `LOG: handleImageTextComplete - ${elementName}: New imageTextStatus will be:`,
           JSON.stringify(newState)
         );
@@ -235,14 +246,14 @@ function Fv() {
       <div id="Fv" className={styles.fv} style={{ height: "100vh" }}>
         {/* Header_SpにtoggleMenu関数とisMenuOpen状態を渡す */}
         <Header_Sp toggleMenu={toggleMenu} isMenuOpen={isMenuOpen} />
-        {console.log(
+        {log(
           "LOG: Rendering main animation block. shouldTriggerAnimation:",
           shouldTriggerAnimation
         )}
         {shouldTriggerAnimation && (
           <motion.div className={styles.fv_animation_container}>
             <div className={styles.fv_other_elements_wrapper}>
-              {console.log("LOG: Rendering A Elements group.")}
+              {log("LOG: Rendering A Elements group.")}
               {/* A Elements - ライン要素 */}
               <motion.img
                 className={styles.fv_header_line}
@@ -254,7 +265,7 @@ function Fv() {
                 animate="visible"
                 variants={maskAnimationVariants("top")}
                 onAnimationComplete={() => {
-                  console.log("LOG: fv_header_line (PC) onAnimationComplete");
+                  log("LOG: fv_header_line (PC) onAnimationComplete");
                   handleAElementComplete("header_line_pc");
                 }}
               />
@@ -270,7 +281,7 @@ function Fv() {
                   animate="visible"
                   variants={maskAnimationVariants("top")}
                   onAnimationComplete={() => {
-                    console.log("LOG: fv_header_lineSp (SP) onAnimationComplete");
+                    log("LOG: fv_header_lineSp (SP) onAnimationComplete");
                     handleAElementComplete("header_line_sp");
                   }}
                 />
@@ -286,7 +297,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log("LOG: fv_header_ballSp (SP) onAnimationComplete");
+                      log("LOG: fv_header_ballSp (SP) onAnimationComplete");
                       handleBElementComplete("header_ball_sp");
                     }}
                   />
@@ -305,7 +316,7 @@ function Fv() {
                   animate="visible"
                   variants={maskAnimationVariants("left")}
                   onAnimationComplete={() => {
-                    console.log("LOG: fv_left_linePc (PC) onAnimationComplete");
+                    log("LOG: fv_left_linePc (PC) onAnimationComplete");
                     handleAElementComplete("left_line_pc");
                   }}
                 />
@@ -320,7 +331,7 @@ function Fv() {
                   variants={maskAnimationVariants("right")} // SP用も右から左を想定
                   transition={{ duration: 1.2, ease: [0, 0, 0.58, 1] }}
                   onAnimationComplete={() => {
-                    console.log("LOG: fv_left_lineSp (SP) onAnimationComplete");
+                    log("LOG: fv_left_lineSp (SP) onAnimationComplete");
                     handleAElementComplete("left_line_sp");
                   }}
                 />
@@ -335,7 +346,7 @@ function Fv() {
                 animate="visible"
                 variants={maskAnimationVariants("right")}
                 onAnimationComplete={() => {
-                  console.log("LOG: fv_right_line (PC) onAnimationComplete");
+                  log("LOG: fv_right_line (PC) onAnimationComplete");
                   handleAElementComplete("right_line_pc");
                 }}
               />
@@ -349,12 +360,12 @@ function Fv() {
                 animate="visible"
                 variants={maskAnimationVariants("right")}
                 onAnimationComplete={() => {
-                  console.log("LOG: fv_right_lineSp (SP) onAnimationComplete");
+                  log("LOG: fv_right_lineSp (SP) onAnimationComplete");
                   handleAElementComplete("right_line_sp");
                 }}
               />
 
-              {console.log(
+              {log(
                 "LOG: Rendering B Elements group. aElementsComplete:",
                 aElementsComplete
               )}
@@ -371,7 +382,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log("LOG: fv_header_ball (PC) onAnimationComplete");
+                      log("LOG: fv_header_ball (PC) onAnimationComplete");
                       handleBElementComplete("header_ball_pc");
                     }}
                   />
@@ -388,7 +399,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log(
+                      log(
                         "LOG: fv_right_polygon_left (PC) onAnimationComplete"
                       );
                       handleBElementComplete("right_polygon_left_pc");
@@ -404,7 +415,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log(
+                      log(
                         "LOG: fv_right_polygon_leftSp (SP) onAnimationComplete"
                       );
                       handleBElementComplete("right_polygon_left_sp");
@@ -420,7 +431,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log(
+                      log(
                         "LOG: fv_right_polygon_right (PC) onAnimationComplete"
                       );
                       handleBElementComplete("right_polygon_right_pc"); // onAnimationCompleteを追加
@@ -436,7 +447,7 @@ function Fv() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1 }}
                     onAnimationComplete={() => {
-                      console.log(
+                      log(
                         "LOG: fv_right_polygon_rightSp (SP) onAnimationComplete"
                       );
                       handleBElementComplete("right_polygon_right_sp"); // onAnimationCompleteを追加
@@ -445,7 +456,7 @@ function Fv() {
                 </>
               )}
 <figure className={styles.fv_mainImage}>
-              {console.log(
+              {log(
                 "LOG: Rendering Image/Text group. bElementsComplete:",
                 bElementsComplete
               )}
@@ -458,11 +469,11 @@ function Fv() {
                     animate="visible" // bElementsCompleteでvisibleに切り替え
                     variants={imageTextVariants}
                     onAnimationComplete={() => {
-                      console.log("LOG: fv_image onAnimationComplete");
+                      log("LOG: fv_image onAnimationComplete");
                       handleImageTextComplete("fv_image");
                     }}
                   >
-                    {console.log(
+                    {log(
                       "LOG: Rendering fv_image content. bElementsComplete:",
                       bElementsComplete
                     )}
@@ -486,11 +497,11 @@ function Fv() {
                     animate="visible" // bElementsCompleteでvisibleに切り替え
                     variants={imageTextVariants}
                     onAnimationComplete={() => {
-                      console.log("LOG: fv__text onAnimationComplete");
+                      log("LOG: fv__text onAnimationComplete");
                       handleImageTextComplete("fv__text");
                     }}
                   >
-                    {console.log(
+                    {log(
                       "LOG: Rendering fv__text content. bElementsComplete:",
                       bElementsComplete
                     )}
@@ -509,7 +520,7 @@ function Fv() {
                 </>
               )}
               <div className={styles.fv_svg_wrapper}>
-                {console.log(
+                {log(
                   "LOG: Rendering SVG group. imageTextAnimationComplete:",
                   imageTextAnimationComplete
                 )}
@@ -520,7 +531,7 @@ function Fv() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
                   >
-                    {console.log("LOG: Rendering fv__pencil (SVG) content.")}
+                    {log("LOG: Rendering fv__pencil (SVG) content.")}
                     <svg
                       style={{ width: "100%", height: "100%" }}
                       viewBox="0 0 245 22"

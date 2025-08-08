@@ -6,6 +6,9 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 
+// 開発環境でのみログを出力
+const log = (msg) => process.env.NODE_ENV === 'development' && console.log(`[About] ${msg}`);
+
 // マスクアニメーション（線が少しずつ表示される）を復活
 const maskAnimationVariants = (direction = "left") => ({
   hidden: {
@@ -62,7 +65,7 @@ const secondSectionVariants = {
     transition: {
       duration: 0.6,
       ease: "easeOut",
-      delay: 1.8,
+      delay: 1.0,
     },
   },
 };
@@ -71,6 +74,9 @@ function About() {
   const [lineAnimationComplete, setLineAnimationComplete] = useState(false);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  
+  // ビューポート検出をログ
+  isInView && log('Section in view - animations starting');
 
   return (
     <div id="About" className={styles.about}>
@@ -143,10 +149,12 @@ function About() {
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
             variants={contentContainerVariants}
+            onAnimationStart={() => log('content-container animation start')}
           >
             <motion.div
               className={styles.about__1st}
               variants={contentItemVariants}
+              onAnimationStart={() => log('about__1st animation start')}
             >
               <img
                 className={styles.about__icon}
@@ -202,6 +210,7 @@ function About() {
             <motion.div
               className={styles.about__2nd}
               variants={secondSectionVariants}
+              onAnimationStart={() => log('about__2nd animation start (1.0s delay)')}
             >
               <div className={styles.about__coding}>
                 <Image
