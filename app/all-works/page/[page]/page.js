@@ -23,18 +23,38 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// 作品を取得するクエリ - 動的にスキル構造を判断
+// 開発環境でのみログを表示するヘルパー関数
+function devLog(message, ...args) {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+}
+
+// menuOrderでソートするヘルパー関数
+function sortWorksByMenuOrder(works) {
+  if (!works || !Array.isArray(works)) return [];
+  
+  // スプレッド演算子で新しい配列を作成
+  return [...works].sort((a, b) => {
+    const orderA = a.menuOrder || 0;
+    const orderB = b.menuOrder || 0;
+    return orderA - orderB;
+  });
+}
+
+// 作品を取得するクエリ - menuOrderでソート、menuOrderフィールドを追加
 const GET_WORKS_TEST_NESTED = gql`
   query GetWorksTestNested($first: Int!, $after: String) {
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -66,12 +86,13 @@ const GET_WORKS_TEST_DIRECT = gql`
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -101,12 +122,13 @@ const GET_WORKS_TEST_META = gql`
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -148,11 +170,11 @@ async function determineSkillStructure() {
         data?.works?.nodes?.[0]?.works &&
         typeof data.works.nodes[0].works.skill !== "undefined"
       ) {
-        console.log("Skill structure: nested");
+        devLog("Skill structure: nested");
         return { structure: "nested", query: GET_WORKS_TEST_NESTED };
       }
     } catch (error) {
-      console.log("Nested skill test failed:", error.message);
+      devLog("Nested skill test failed:", error.message);
     }
 
     // 次にdirect構造をテスト
@@ -166,11 +188,11 @@ async function determineSkillStructure() {
         data?.works?.nodes?.[0] &&
         typeof data.works.nodes[0].skill !== "undefined"
       ) {
-        console.log("Skill structure: direct");
+        devLog("Skill structure: direct");
         return { structure: "direct", query: GET_WORKS_TEST_DIRECT };
       }
     } catch (error) {
-      console.log("Direct skill test failed:", error.message);
+      devLog("Direct skill test failed:", error.message);
     }
 
     // 最後にmeta構造をテスト
@@ -185,16 +207,16 @@ async function determineSkillStructure() {
           (meta) => meta.key === "skill" || meta.key === "_skill"
         );
         if (skillMeta) {
-          console.log("Skill structure: meta");
+          devLog("Skill structure: meta");
           return { structure: "meta", query: GET_WORKS_TEST_META };
         }
       }
     } catch (error) {
-      console.log("Meta skill test failed:", error.message);
+      devLog("Meta skill test failed:", error.message);
     }
 
     // フォールバック
-    console.log("Skill structure: fallback to nested");
+    devLog("Skill structure: fallback to nested");
     return { structure: "nested", query: GET_WORKS_TEST_NESTED };
   } catch (error) {
     console.error("Error determining skill structure:", error);
@@ -246,7 +268,7 @@ const getSkill = (work, structure) => {
   return "";
 };
 
-// 全作品を再帰的に取得する関数
+// 全作品を再帰的に取得する関数（ソート機能付き）
 async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
   try {
     const { data } = await client.query({
@@ -261,7 +283,9 @@ async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
     const newAllWorks = [...allWorks, ...works];
 
     if (newAllWorks.length >= MAX_WORKS_TO_FETCH) {
-      return newAllWorks.slice(0, MAX_WORKS_TO_FETCH);
+      const limitedWorks = newAllWorks.slice(0, MAX_WORKS_TO_FETCH);
+      // menuOrderでソート（0からの整数、小さい値が先頭）
+      return sortWorksByMenuOrder(limitedWorks);
     }
 
     if (
@@ -275,20 +299,28 @@ async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
       );
     }
 
-    return newAllWorks;
+    // 最終的にmenuOrderでソート
+    return sortWorksByMenuOrder(newAllWorks);
   } catch (error) {
     console.error("Error fetching works:", error);
-    return allWorks;
+    return sortWorksByMenuOrder(allWorks);
   }
 }
 
 // ページネーション情報と共に作品を返す
 async function getAllWorksWithPagination(requestedPage = 1) {
   try {
-    console.log(`Fetching works for page ${requestedPage}...`);
+    devLog(`Fetching works for page ${requestedPage}...`);
 
     const skillStructure = await determineSkillStructure();
     const allWorks = await fetchAllWorks(skillStructure);
+    
+    // 開発環境でのソート確認
+    devLog("📊 Works order check (first 10) for paginated page:");
+    allWorks.slice(0, 10).forEach((work, index) => {
+      devLog(`${index + 1}. ${work.title} (menuOrder: ${work.menuOrder || 0})`);
+    });
+    
     const totalWorks = allWorks.length;
     const totalPages = Math.ceil(totalWorks / WORKS_PER_PAGE);
 
@@ -298,7 +330,7 @@ async function getAllWorksWithPagination(requestedPage = 1) {
     const endIndex = startIndex + WORKS_PER_PAGE;
     const currentPageWorks = allWorks.slice(startIndex, endIndex);
 
-    console.log(
+    devLog(
       `Found ${totalWorks} total works, showing page ${currentPage}/${totalPages}`
     );
 
@@ -338,11 +370,11 @@ async function getAllWorksWithPagination(requestedPage = 1) {
 // ビルド時に総ページ数を計算する
 async function calculateTotalPages() {
   try {
-    console.log("Calculating total pages for static generation...");
+    devLog("Calculating total pages for static generation...");
     const skillStructure = await determineSkillStructure();
     const allWorks = await fetchAllWorks(skillStructure);
     const totalPages = Math.ceil(allWorks.length / WORKS_PER_PAGE);
-    console.log(`Total works: ${allWorks.length}, Total pages: ${totalPages}`);
+    devLog(`Total works: ${allWorks.length}, Total pages: ${totalPages}`);
     return Math.max(1, totalPages);
   } catch (error) {
     console.error("Error calculating total pages:", error);
@@ -361,8 +393,8 @@ export async function generateStaticParams() {
       params.push({ page: i.toString() }); // 文字列として返す
     }
 
-    console.log(`Generated static params:`, params);
-    console.log(`Total pages generated: ${params.length} (excluding page 1)`);
+    devLog(`Generated static params:`, params);
+    devLog(`Total pages generated: ${params.length} (excluding page 1)`);
     return params;
   } catch (error) {
     console.error("Error generating static params:", error);
@@ -387,7 +419,6 @@ export async function generateMetadata({ params }) {
 // SSGでビルド時に静的に生成
 export const dynamic = 'force-static';
 export const revalidate = 86400;
-
 
 // ページネーションコンポーネント
 function Pagination({ pagination, basePath = "/all-works" }) {
@@ -524,7 +555,7 @@ export default async function WorksPage({ params }) {
   // URLパラメータからページ番号を取得（2ページ目以降）
   const page = params?.page ? parseInt(params.page) : 2;
 
-  console.log(`Rendering works page: ${page}`);
+  devLog(`Rendering works page: ${page}`);
 
   const { works, skillStructure, pagination, error } =
     await getAllWorksWithPagination(page);
@@ -582,11 +613,11 @@ export default async function WorksPage({ params }) {
       <div className={styles.breadcrumbWrapper}>
         <Breadcrumb items={breadcrumbItems} />
       </div>
-            <WorksClient
-              works={works}
-              skillStructure={skillStructure}
-              pagination={pagination}
-            />
+      <WorksClient
+        works={works}
+        skillStructure={skillStructure}
+        pagination={pagination}
+      />
     </div>
   );
 }

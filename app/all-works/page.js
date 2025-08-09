@@ -26,18 +26,19 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// 作品を取得するクエリ群 (変更なし)
+// 作品を取得するクエリ群（menuOrderでソート、menuOrderフィールドを追加）
 const GET_WORKS_TEST_NESTED = gql`
   query GetWorksTestNested($first: Int!, $after: String) {
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -69,12 +70,13 @@ const GET_WORKS_TEST_DIRECT = gql`
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -104,12 +106,13 @@ const GET_WORKS_TEST_META = gql`
     works(
       first: $first
       after: $after
-      where: { orderby: { field: DATE, order: DESC } }
+      where: { orderby: { field: MENU_ORDER, order: ASC } }
     ) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -137,7 +140,26 @@ const GET_WORKS_TEST_META = gql`
   }
 `;
 
-// スキル構造を判断する関数 (変更なし)
+// 開発環境でのみログを表示するヘルパー関数
+function devLog(message, ...args) {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+}
+
+// menuOrderでソートするヘルパー関数
+function sortWorksByMenuOrder(works) {
+  if (!works || !Array.isArray(works)) return [];
+  
+  // スプレッド演算子で新しい配列を作成
+  return [...works].sort((a, b) => {
+    const orderA = a.menuOrder || 0;
+    const orderB = b.menuOrder || 0;
+    return orderA - orderB;
+  });
+}
+
+// スキル構造を判断する関数
 async function determineSkillStructure() {
   try {
     // まずnested構造をテスト
@@ -151,11 +173,11 @@ async function determineSkillStructure() {
         data?.works?.nodes?.[0]?.works &&
         typeof data.works.nodes[0].works.skill !== "undefined"
       ) {
-        console.log("Skill structure: nested");
+        devLog("Skill structure: nested");
         return { structure: "nested", query: GET_WORKS_TEST_NESTED };
       }
     } catch (error) {
-      console.log("Nested skill test failed:", error.message);
+      devLog("Nested skill test failed:", error.message);
     }
 
     // 次にdirect構造をテスト
@@ -169,11 +191,11 @@ async function determineSkillStructure() {
         data?.works?.nodes?.[0] &&
         typeof data.works.nodes[0].skill !== "undefined"
       ) {
-        console.log("Skill structure: direct");
+        devLog("Skill structure: direct");
         return { structure: "direct", query: GET_WORKS_TEST_DIRECT };
       }
     } catch (error) {
-      console.log("Direct skill test failed:", error.message);
+      devLog("Direct skill test failed:", error.message);
     }
 
     // 最後にmeta構造をテスト
@@ -188,16 +210,16 @@ async function determineSkillStructure() {
           (meta) => meta.key === "skill" || meta.key === "_skill"
         );
         if (skillMeta) {
-          console.log("Skill structure: meta");
+          devLog("Skill structure: meta");
           return { structure: "meta", query: GET_WORKS_TEST_META };
         }
       }
     } catch (error) {
-      console.log("Meta skill test failed:", error.message);
+      devLog("Meta skill test failed:", error.message);
     }
 
     // フォールバック
-    console.log("Skill structure: fallback to nested");
+    devLog("Skill structure: fallback to nested");
     return { structure: "nested", query: GET_WORKS_TEST_NESTED };
   } catch (error) {
     console.error("Error determining skill structure:", error);
@@ -205,13 +227,7 @@ async function determineSkillStructure() {
   }
 }
 
-// ヘルパー関数 (WorksClient.jsx に移動するため、ここでは削除)
-// const truncateTitle = (title, maxLength = 25) => { /* ... */ };
-// const formatSkill = (skillValue) => { /* ... */ };
-// const getCategoryName = (work) => { /* ... */ };
-// const getSkill = (work, structure) => { /* ... */ };
-
-// 全作品を再帰的に取得する関数 (変更なし)
+// 全作品を再帰的に取得する関数（ソート機能付き）
 async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
   try {
     const { data } = await client.query({
@@ -226,7 +242,9 @@ async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
     const newAllWorks = [...allWorks, ...works];
 
     if (newAllWorks.length >= MAX_WORKS_TO_FETCH) {
-      return newAllWorks.slice(0, MAX_WORKS_TO_FETCH);
+      const limitedWorks = newAllWorks.slice(0, MAX_WORKS_TO_FETCH);
+      // menuOrderでソート（0からの整数、小さい値が先頭）
+      return sortWorksByMenuOrder(limitedWorks);
     }
 
     if (
@@ -240,18 +258,26 @@ async function fetchAllWorks(skillStructure, after = null, allWorks = []) {
       );
     }
 
-    return newAllWorks;
+    // 最終的にmenuOrderでソート
+    return sortWorksByMenuOrder(newAllWorks);
   } catch (error) {
     console.error("Error fetching works:", error);
-    return allWorks;
+    return sortWorksByMenuOrder(allWorks);
   }
 }
 
-// ページネーション情報と共に作品を返す (変更なし)
+// ページネーション情報と共に作品を返す
 async function getAllWorksWithPagination(requestedPage = 1) {
   try {
     const skillStructure = await determineSkillStructure();
     const allWorks = await fetchAllWorks(skillStructure);
+    
+    // 開発環境でのソート確認
+    devLog("📊 Works order check (first 10):");
+    allWorks.slice(0, 10).forEach((work, index) => {
+      devLog(`${index + 1}. ${work.title} (menuOrder: ${work.menuOrder || 0})`);
+    });
+    
     const totalWorks = allWorks.length;
     const totalPages = Math.ceil(totalWorks / WORKS_PER_PAGE);
 
@@ -294,7 +320,7 @@ async function getAllWorksWithPagination(requestedPage = 1) {
   }
 }
 
-// メタデータを設定 (変更なし)
+// メタデータを設定
 export const metadata = {
   title: "作品一覧",
   description: "作品の一覧ページです",
@@ -308,20 +334,16 @@ export const metadata = {
 export const dynamic = 'force-static';
 export const revalidate = 86400;
 
-
-// ページネーションコンポーネント (WorksClient.jsx に移動するため、ここでは削除)
-// function Pagination({ pagination, basePath = "/all-works" }) { /* ... */ }
-
 // メインコンポーネント（WorksPage - サーバーコンポーネント）
 export default async function WorksPage() {
   const page = 1; // 1ページ目固定
 
-  console.log(`Rendering works page: ${page} (first page)`);
+  devLog(`Rendering works page: ${page} (first page)`);
 
   const { works, skillStructure, pagination, error } =
     await getAllWorksWithPagination(page);
 
-  // エラーハンドリング (WorksClient.jsx にも同様のロジックが必要になる場合がある)
+  // エラーハンドリング
   if (error) {
     return (
       <div className={styles.allWorks}>

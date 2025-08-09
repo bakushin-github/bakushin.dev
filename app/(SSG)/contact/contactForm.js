@@ -10,6 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import useRecaptcha from "@/hooks/useRecaptcha";
 
+// 開発環境でのみログを表示するヘルパー関数
+const devLog = (message, ...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+};
+
 // Zodでバリデーションスキーマを定義
 const contactSchema = z.object({
   company: z.string().optional(),
@@ -54,7 +61,7 @@ export default function ContactForm() {
     try {
       // 1. ハニーポットチェック
       if (data.website && data.website.trim() !== "") {
-        console.log("スパム判定: フォーム送信を中止");
+        devLog("スパム判定: フォーム送信を中止"); // 🔧 修正: 開発環境のみ
         setSubmitError("送信に失敗しました。");
         setIsSubmitting(false);
         return;
@@ -62,7 +69,7 @@ export default function ContactForm() {
 
       // 2. reCAPTCHA検証
       const token = await executeRecaptcha("submit_contact");
-      console.log("reCAPTCHA トークン:", token); 
+      devLog("reCAPTCHA トークン:", token); // 🔧 修正: 開発環境のみ
       if (!token) {
         setSubmitError("セキュリティ検証に失敗しました。再度お試しください。");
         setIsSubmitting(false);
@@ -82,7 +89,7 @@ const verifyRes = await fetch("/api/contact", {
 
 const verifyData = await verifyRes.json();
 if (!verifyRes.ok || !verifyData.success) {
-  console.error("スコア検証失敗 or スパム判定:", verifyData);
+  console.error("スコア検証失敗 or スパム判定:", verifyData); // エラーなので本番でも出力
   setSubmitError("スパム検知の可能性があります。再度お試しください。");
   setIsSubmitting(false);
   return;
@@ -95,7 +102,7 @@ if (!verifyRes.ok || !verifyData.success) {
       router.push("/contact/thanks");
 
     } catch (error) {
-      console.error("送信エラー:", error);
+      console.error("送信エラー:", error); // エラーなので本番でも出力
       setSubmitError("送信中にエラーが発生しました。時間をおいて再度お試しください。");
       setIsSubmitting(false);
     }
@@ -146,8 +153,8 @@ if (!verifyRes.ok || !verifyData.success) {
       <Script
         src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
         strategy="afterInteractive"
-        onLoad={() => console.log("✅ reCAPTCHA スクリプト読み込み完了")}
-        onError={() => console.error("❌ reCAPTCHA スクリプト読み込み失敗")}
+        onLoad={() => devLog("✅ reCAPTCHA スクリプト読み込み完了")} // 🔧 修正: 開発環境のみ
+        onError={() => console.error("❌ reCAPTCHA スクリプト読み込み失敗")} // エラーなので本番でも出力
       />
     <form 
       ref={formRef}

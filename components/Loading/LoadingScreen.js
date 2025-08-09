@@ -7,6 +7,19 @@ const LoadingScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isCompleting, setIsCompleting] = useState(false);
 
+  // 開発環境でのみログを表示
+  const devLog = (message, ...args) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(message, ...args);
+    }
+  };
+
+  const devError = (message, ...args) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(message, ...args);
+    }
+  };
+
   useEffect(() => {
     let timer;
 
@@ -64,12 +77,12 @@ const LoadingScreen = ({ onComplete }) => {
                 width="170.182"
                 height="48"
                 onError={(e) => {
-                  console.error("Logo image failed to load:", e.target.src);
+                  devError("Logo image failed to load:", e.target.src);
                   // フォールバック: 画像が読み込めない場合は非表示
                   e.target.style.display = "none";
                 }}
                 onLoad={() => {
-                  console.log("Logo image loaded successfully");
+                  devLog("Logo image loaded successfully");
                 }}
               />
             </div>

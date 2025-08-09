@@ -26,7 +26,7 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (data) => {
-    const token = await grecaptcha.execute("あなたのreCAPTCHAサイトキー", { action: "submit" });
+    const token = await grecaptcha.execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, { action: "submit" });
 
     const res = await fetch("/api/contact", {
       method: "POST",

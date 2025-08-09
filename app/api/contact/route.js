@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 
-console.log('環境変数チェック:');
-console.log('RECAPTCHA_SECRET_KEY:', process.env.RECAPTCHA_SECRET_KEY ? '設定あり' : '設定なし');
-console.log('NEXT_PUBLIC_RECAPTCHA_SITE_KEY:', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? '設定あり' : '設定なし');
+// 開発環境でのみログを表示するヘルパー関数
+const devLog = (message, ...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+};
+
+// 🔧 修正: 開発環境でのみ環境変数チェック
+devLog('環境変数チェック:');
+devLog('RECAPTCHA_SECRET_KEY:', process.env.RECAPTCHA_SECRET_KEY ? '設定あり' : '設定なし');
+devLog('NEXT_PUBLIC_RECAPTCHA_SITE_KEY:', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? '設定あり' : '設定なし');
 
 export async function POST(request) {
   try {
@@ -31,9 +39,9 @@ export async function POST(request) {
 
     const recaptchaResult = await recaptchaResponse.json();
 
-    // ✅ スコアと全体をログ出力（順番注意）
-    console.log("reCAPTCHA 検証成功：score =", recaptchaResult.score);
-    console.log("reCAPTCHA 検証結果の全体:", recaptchaResult);
+    // 🔧 修正: 開発環境でのみスコアと結果をログ出力
+    devLog("reCAPTCHA 検証成功：score =", recaptchaResult.score);
+    devLog("reCAPTCHA 検証結果の全体:", recaptchaResult);
     //☝️セキュリティー上、スコアはブラウザに出していない（ターミナル出力のみ）
 
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
@@ -50,6 +58,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
+    // 🔧 エラーログは本番環境でも重要なので保持
     console.error('❌ サーバーエラー:', error);
     return NextResponse.json(
       { success: false, message: 'サーバーエラーが発生しました' },

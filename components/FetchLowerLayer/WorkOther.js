@@ -11,15 +11,32 @@ import { useRouter } from "next/navigation";
 
 console.log("WorkOther.js module loaded");
 
-// --- テストクエリ ---
+// 開発環境でのみログを表示するヘルパー関数
+const devLog = (message, ...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+};
+
+// menuOrderでソートするヘルパー関数
+const sortWorksByMenuOrder = (works) => {
+  return works.sort((a, b) => {
+    const orderA = a.menuOrder || 0;
+    const orderB = b.menuOrder || 0;
+    return orderA - orderB;
+  });
+};
+
+// --- テストクエリ（menuOrderでソート、menuOrderフィールド追加） ---
 // WPGraphQL のカスタム投稿タイプ 'works' の構造を動的に判断するためのテストクエリです。
 // スキルデータが 'works' フィールド内にネストされているかを確認します。
 const TEST_NESTED_SKILL = gql`
   query TestNestedSkill {
-    works(first: 1) {
+    works(first: 1, where: { orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
+        menuOrder
         works { # カスタムフィールドグループ 'works' が存在し、その中に 'skill' があるか
           skill
         }
@@ -38,10 +55,11 @@ const TEST_NESTED_SKILL = gql`
 // スキルデータが 'works' ノードの直下にあるかを確認します。
 const TEST_DIRECT_SKILL = gql`
   query TestDirectSkill {
-    works(first: 1) {
+    works(first: 1, where: { orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
+        menuOrder
         skill # 'skill' フィールドが直下にあるか
         categories {
           nodes {
@@ -58,10 +76,11 @@ const TEST_DIRECT_SKILL = gql`
 // スキルデータが汎用的な 'metaData' フィールドとして格納されているかを確認します。
 const TEST_META_DATA = gql`
   query TestMetaData {
-    works(first: 1) {
+    works(first: 1, where: { orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
+        menuOrder
         metaData { # ACF などで追加されたカスタムフィールドが metaData に格納されているか
           key
           value
@@ -78,14 +97,15 @@ const TEST_META_DATA = gql`
   }
 `;
 
-// --- 最終的に使用する作品データ取得クエリ ---
+// --- 最終的に使用する作品データ取得クエリ（menuOrderでソート、menuOrderフィールド追加、現在の作品を除外） ---
 const GET_WORKS_WITH_NESTED_SKILL = gql`
   query GetWorksWithNestedSkill($currentWorkId: [ID]) {
-    works(first: 6, where: { notIn: $currentWorkId }) {
+    works(first: 6, where: { notIn: $currentWorkId, orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -110,11 +130,12 @@ const GET_WORKS_WITH_NESTED_SKILL = gql`
 
 const GET_WORKS_WITH_DIRECT_SKILL = gql`
   query GetWorksWithDirectSkill($currentWorkId: [ID]) {
-    works(first: 6, where: { notIn: $currentWorkId }) {
+    works(first: 6, where: { notIn: $currentWorkId, orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -137,11 +158,12 @@ const GET_WORKS_WITH_DIRECT_SKILL = gql`
 
 const GET_WORKS_WITH_METADATA = gql`
   query GetWorksWithMetaData($currentWorkId: [ID]) {
-    works(first: 6, where: { notIn: $currentWorkId }) {
+    works(first: 6, where: { notIn: $currentWorkId, orderby: { field: MENU_ORDER, order: ASC } }) {
       nodes {
         id
         title
         slug
+        menuOrder
         excerpt(format: RENDERED)
         featuredImage {
           node {
@@ -195,40 +217,37 @@ const getCategoryName = (work) => {
   return work.categories.nodes.length > 0 ? work.categories.nodes[0].name : "";
 };
 
-
-
-
-
 // --- WorkOthers コンポーネント ---
 function WorkOthers({ currentWorkId }) {
   const [clickedSlug, setClickedSlug] = useState(null);
-const router = useRouter();
+  const router = useRouter();
 
-const handleCardClick = (e, slug) => {
-  e.preventDefault();
-  if (clickedSlug) return;
-  setClickedSlug(slug);
+  const handleCardClick = (e, slug) => {
+    e.preventDefault();
+    if (clickedSlug) return;
+    setClickedSlug(slug);
 
-  const workLink = e.currentTarget.querySelector(`.${styles.worksLink}`);
-  if (workLink) {
-    workLink.classList.add(styles.clicked); // `.worksLink.clicked::before` にアニメーションが定義されている前提
-    workLink.addEventListener(
-      "animationend",
-      () => {
-        router.push(`/all-works/${slug}`);
-      },
-      { once: true }
-    );
-  } else {
-    router.push(`/all-works/${slug}`);
-  }
-};
-  console.log("WorkOthers component rendering with currentWorkId:", currentWorkId);
+    const workLink = e.currentTarget.querySelector(`.${styles.worksLink}`);
+    if (workLink) {
+      workLink.classList.add(styles.clicked); // `.worksLink.clicked::before` にアニメーションが定義されている前提
+      workLink.addEventListener(
+        "animationend",
+        () => {
+          router.push(`/all-works/${slug}`);
+        },
+        { once: true }
+      );
+    } else {
+      router.push(`/all-works/${slug}`);
+    }
+  };
+
+  devLog("WorkOthers component rendering with currentWorkId:", currentWorkId);
 
   const [isClient, setIsClient] = useState(false);
   const [accessMethod, setAccessMethod] = useState(null);
   const [finalQuery, setFinalQuery] = useState(null);
-  const [columns, setColumns] = useState(3); // ★★★ columns はここで定義済み ★★★
+  const [columns, setColumns] = useState(3);
 
   // 列数を検出するためのeffect
   useEffect(() => {
@@ -255,8 +274,8 @@ const handleCardClick = (e, slug) => {
     loading: nestedTestLoading,
   } = useQuery(TEST_NESTED_SKILL, {
     skip: !isClient,
-    onCompleted: (data) => console.log("Nested test query completed:", data),
-    onError: (error) => console.log("Nested skill access test error:", error.message),
+    onCompleted: (data) => devLog("Nested test query completed:", data),
+    onError: (error) => devLog("Nested skill access test error:", error.message),
   });
 
   const {
@@ -271,8 +290,8 @@ const handleCardClick = (e, slug) => {
         nestedTestData?.works?.nodes?.[0]?.works &&
         typeof nestedTestData.works.nodes[0].works.skill !== "undefined"
       ),
-    onCompleted: (data) => console.log("Direct test query completed:", data),
-    onError: (error) => console.log("Direct skill access test error:", error.message),
+    onCompleted: (data) => devLog("Direct test query completed:", data),
+    onError: (error) => devLog("Direct skill access test error:", error.message),
   });
 
   const {
@@ -292,25 +311,25 @@ const handleCardClick = (e, slug) => {
         directTestData?.works?.nodes?.[0] &&
         typeof directTestData.works.nodes[0].skill !== "undefined"
       ),
-    onCompleted: (data) => console.log("Meta test query completed:", data),
-    onError: (error) => console.log("Meta data access test error:", error.message),
+    onCompleted: (data) => devLog("Meta test query completed:", data),
+    onError: (error) => devLog("Meta data access test error:", error.message),
   });
 
   // クライアント側でのマウントをマーク
   useEffect(() => {
-    console.log("Initial useEffect running - setting isClient to true");
+    devLog("Initial useEffect running - setting isClient to true");
     setIsClient(true);
     return () => {
-      console.log("Cleanup function called");
+      devLog("Cleanup function called");
     };
   }, []);
 
   // isClient 変更時のログ
   useEffect(() => {
-    console.log("isClient changed to:", isClient);
+    devLog("isClient changed to:", isClient);
     if (isClient) {
       setTimeout(() => {
-        console.log("Delayed check after isClient changed:", {
+        devLog("Delayed check after isClient changed:", {
           isClient,
           nestedTestLoading,
           directTestLoading,
@@ -322,7 +341,7 @@ const handleCardClick = (e, slug) => {
 
   // テストクエリの結果に基づいて最終クエリを決定
   useEffect(() => {
-    console.log("Query decision useEffect running with:", {
+    devLog("Query decision useEffect running with:", {
       isClient,
       nestedTestLoading,
       directTestLoading,
@@ -338,7 +357,7 @@ const handleCardClick = (e, slug) => {
       directTestLoading ||
       metaTestLoading
     ) {
-      console.log("Skipping query decision due to loading state");
+      devLog("Skipping query decision due to loading state");
       return;
     }
 
@@ -346,7 +365,7 @@ const handleCardClick = (e, slug) => {
       nestedTestData?.works?.nodes?.[0]?.works &&
       typeof nestedTestData.works.nodes[0].works.skill !== "undefined"
     ) {
-      console.log("Access method: nested");
+      devLog("Access method: nested");
       setAccessMethod("nested");
       setFinalQuery(GET_WORKS_WITH_NESTED_SKILL);
     }
@@ -354,7 +373,7 @@ const handleCardClick = (e, slug) => {
       directTestData?.works?.nodes?.[0] &&
       typeof directTestData.works.nodes[0].skill !== "undefined"
     ) {
-      console.log("Access method: direct");
+      devLog("Access method: direct");
       setAccessMethod("direct");
       setFinalQuery(GET_WORKS_WITH_DIRECT_SKILL);
     }
@@ -363,17 +382,17 @@ const handleCardClick = (e, slug) => {
         (meta) => meta.key === "skill" || meta.key === "_skill"
       );
       if (skillMeta) {
-        console.log("Access method: meta");
+        devLog("Access method: meta");
         setAccessMethod("meta");
         setFinalQuery(GET_WORKS_WITH_METADATA);
       } else {
-        console.log("Access method: unknown (skill not found in metaData)");
+        devLog("Access method: unknown (skill not found in metaData)");
         setAccessMethod("unknown");
         setFinalQuery(DEFAULT_FALLBACK_QUERY);
       }
     }
     else {
-      console.log(
+      devLog(
         "Access method: unknown (skill not found in any tested structure)"
       );
       setAccessMethod("unknown");
@@ -397,13 +416,32 @@ const handleCardClick = (e, slug) => {
     finalQuery || DEFAULT_FALLBACK_QUERY,
     {
       variables: {
-        currentWorkId: currentWorkId ? [currentWorkId] : [], // IDを配列として渡し、なければ空の配列
+        currentWorkId: currentWorkId ? [currentWorkId] : [], // 現在の作品IDを配列として渡し、なければ空の配列
       },
       skip: !isClient || !finalQuery,
       fetchPolicy: "cache-first",
       nextFetchPolicy: "cache-only",
-      onCompleted: (data) => console.log("Main query completed:", data),
-      onError: (err) => console.log("Main query error:", err.message)
+      onCompleted: (data) => {
+        devLog("Main query completed:", data);
+        // 取得した作品の並び順を確認
+        if (data?.works?.nodes) {
+          devLog("📊 WorkOthers - retrieved works order (first 6):");
+          data.works.nodes.forEach((work, index) => {
+            devLog(`${index + 1}. ${work.title} (menuOrder: ${work.menuOrder || 0})`);
+          });
+          
+          // 現在の作品が除外されているか確認
+          if (currentWorkId) {
+            const currentWorkInResults = data.works.nodes.find(work => work.id === currentWorkId);
+            if (currentWorkInResults) {
+              devLog("⚠️ Warning: Current work found in results, should be excluded:", currentWorkInResults.title);
+            } else {
+              devLog("✅ Current work correctly excluded from results");
+            }
+          }
+        }
+      },
+      onError: (err) => devLog("Main query error:", err.message)
     }
   );
 
@@ -431,7 +469,7 @@ const handleCardClick = (e, slug) => {
 
   // --- レンダリングロジック ---
   if (!isClient) {
-    console.log("Rendering loading state because isClient is false");
+    devLog("Rendering loading state because isClient is false");
     return (
       <div
         className={styles.worksContents}
@@ -462,7 +500,7 @@ const handleCardClick = (e, slug) => {
     loading ||
     (!finalQuery && (nestedTestLoading || directTestLoading || metaTestLoading))
   ) {
-    console.log("Rendering loading state because queries are still loading", {
+    devLog("Rendering loading state because queries are still loading", {
       loading,
       finalQuery: finalQuery ? "set" : "not set",
       nestedTestLoading,
@@ -496,7 +534,7 @@ const handleCardClick = (e, slug) => {
   }
 
   if (error && !data?.works?.nodes) {
-    console.log("Rendering error state:", error.message);
+    devLog("Rendering error state:", error.message);
     return (
       <div
         className={styles.worksContents}
@@ -512,9 +550,13 @@ const handleCardClick = (e, slug) => {
     );
   }
 
-  const worksToDisplay = data?.works?.nodes || [];
+  let worksToDisplay = data?.works?.nodes || [];
+  
+  // クライアントサイドでもソートを確実に実行（GraphQLのソートが効かない場合のフォールバック）
+  // worksToDisplay = sortWorksByMenuOrder(worksToDisplay);
+  
   if (worksToDisplay.length === 0) {
-    console.log("Rendering empty state, no works found");
+    devLog("Rendering empty state, no works found");
     return (
       <div
         className={styles.worksContents}
@@ -530,11 +572,11 @@ const handleCardClick = (e, slug) => {
     );
   }
 
-  console.log("Rendering works data:", worksToDisplay.length, "items found");
+  devLog("Rendering works data:", worksToDisplay.length, "items found");
   return (
     <div className={styles.worksContents}>
       {worksToDisplay.map((work, index) => {
-        console.log(`Rendering work item ${index}:`, work.title);
+        devLog(`Rendering work item ${index}:`, work.title, "(menuOrder:", work.menuOrder || 0, ")");
 
         // 各作品カードのアニメーション遅延を計算
         const row = Math.floor(index / columns);
@@ -596,5 +638,5 @@ const handleCardClick = (e, slug) => {
   );
 }
 
-console.log("About to export WorkOthers component");
+devLog("About to export WorkOthers component");
 export default WorkOthers;

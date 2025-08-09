@@ -5,14 +5,15 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.scss"; // 同じディレクトリのスタイルシートを参照
-// ResponsiveHeaderWrapper, Breadcrumb, Cta は、サーバーコンポーネントから直接表示されるか、
-// または必要に応じてクライアントコンポーネントに移動します。
-// 今回はpage.jsxで直接レンダリングしているため、ここでは除外します。
-// import ResponsiveHeaderWrapper from "@/components/ResponsiveHeaderWrapper";
-// import Breadcrumb from "@/components/Breadcrumb/index";
-// import Cta from "@/components/SSG/Cta/Cta";
 import { ScrollMotion } from "@/components/animation/Stagger/ScrollMotion"; // ScrollMotionをインポート
 import { useRouter } from "next/navigation";
+
+// 開発環境でのみログを表示するヘルパー関数
+const devLog = (message, ...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+};
 
 // ヘルパー関数（page.jsx から移動）
 const truncateTitle = (title, maxLength = 25) => {
@@ -181,6 +182,7 @@ export default function WorksClient({ works, skillStructure, pagination }) {
       router.push(`/all-works/${slug}`); // fallback
     }
   };
+
   // 列数を検出するためのstateとeffect（ブログ記事一覧と同様）
   const [columns, setColumns] = useState(3); // デフォルトはPCの3列
 
@@ -200,6 +202,14 @@ export default function WorksClient({ works, skillStructure, pagination }) {
     window.addEventListener("resize", calculateColumns);
     return () => window.removeEventListener("resize", calculateColumns);
   }, []);
+
+  // 開発環境での並び順確認ログ
+  useEffect(() => {
+    devLog("🎨 WorksClient received works (first 5):");
+    works.slice(0, 5).forEach((work, index) => {
+      devLog(`${index + 1}. ${work.title} (menuOrder: ${work.menuOrder || 0})`);
+    });
+  }, [works]);
 
   return (
     <main className={styles["works-container"]}>

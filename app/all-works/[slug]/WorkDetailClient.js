@@ -9,7 +9,14 @@ import WorkOthers from "@/components/FetchLowerLayer/WorkOther";
 import ListViewButton from "@/components/SSG/ListViewButton/ListViewButton";
 import { ScrollMotion } from "@/components/animation/Stagger/ScrollMotion";
 
-export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
+// 開発環境でのみログを表示するヘルパー関数
+const devLog = (message, ...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(message, ...args);
+  }
+};
+
+export default function WorkDetailClient({ work, slug, breadcrumbItems, currentWorkId }) {
   const [showBackgroundImage, setShowBackgroundImage] = useState(false);
   const [showCategoryAndTitle, setShowCategoryAndTitle] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
@@ -18,25 +25,26 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
   const contentScrollMotionRef = useRef(null);
 
   // デバッグログ: コンポーネントがレンダリングされるたびに表示
-  console.log("WorkDetailClient is rendering. Current work:", work?.title);
-  console.log("Current showBackgroundImage state:", showBackgroundImage);
-  console.log("Current showCategoryAndTitle state:", showCategoryAndTitle);
+  devLog("WorkDetailClient is rendering. Current work:", work?.title);
+  devLog("Current work ID:", currentWorkId);
+  devLog("Current showBackgroundImage state:", showBackgroundImage);
+  devLog("Current showCategoryAndTitle state:", showCategoryAndTitle);
 
   useEffect(() => {
     if (!work) {
-      console.log("useEffect: Work data is not available, skipping observer setup.");
+      devLog("useEffect: Work data is not available, skipping observer setup.");
       return;
     }
 
-    console.log("useEffect: Setting up Intersection Observer...");
+    devLog("useEffect: Setting up Intersection Observer...");
     
     // より簡単なアプローチ：画像要素のみを監視してバックグラウンドアニメーションをトリガー
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
-          console.log("Background animation trigger - isIntersecting:", entry.isIntersecting);
+          devLog("Background animation trigger - isIntersecting:", entry.isIntersecting);
           if (entry.isIntersecting && !showBackgroundImage) {
-            console.log("SUCCESS: Triggering background animation!");
+            devLog("SUCCESS: Triggering background animation!");
             setShowBackgroundImage(true);
             observer.disconnect(); // 一度トリガーされたら監視を停止
           }
@@ -49,9 +57,9 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
     const checkAndObserve = () => {
       if (imageScrollMotionRef.current) {
         observer.observe(imageScrollMotionRef.current);
-        console.log("useEffect: Observing imageScrollMotionRef.current");
+        devLog("useEffect: Observing imageScrollMotionRef.current");
       } else {
-        console.log("useEffect: imageScrollMotionRef.current is null, retrying...");
+        devLog("useEffect: imageScrollMotionRef.current is null, retrying...");
         setTimeout(checkAndObserve, 100); // 100ms後に再試行
       }
     };
@@ -59,7 +67,7 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
     checkAndObserve();
 
     return () => {
-      console.log("useEffect Cleanup: Observer disconnected.");
+      devLog("useEffect Cleanup: Observer disconnected.");
       observer.disconnect();
     };
   }, [work, showBackgroundImage]);
@@ -67,22 +75,22 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
   // 背景アニメーションの後にカテゴリとタイトルのアニメーションをトリガーするエフェクト
   useEffect(() => {
     if (showBackgroundImage) {
-      console.log(
+      devLog(
         "useEffect (showCategoryAndTitle): showBackgroundImage is true. Setting showCategoryAndTitle with a delay."
       );
       const timer = setTimeout(() => {
         setShowCategoryAndTitle(true);
-        console.log(
+        devLog(
           "useEffect (showCategoryAndTitle): showCategoryAndTitle set to true after delay."
         );
       }, 1400);
 
       return () => {
         clearTimeout(timer);
-        console.log("useEffect (showCategoryAndTitle): Timer cleared.");
+        devLog("useEffect (showCategoryAndTitle): Timer cleared.");
       };
     } else {
-      console.log(
+      devLog(
         "useEffect (showCategoryAndTitle): showBackgroundImage is false, not setting showCategoryAndTitle."
       );
     }
@@ -90,10 +98,10 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
 
   // 動画自動再生の初期化（より直接的なアプローチ）
   useEffect(() => {
-    console.log("Direct video initialization useEffect triggered");
+    devLog("Direct video initialization useEffect triggered");
     
     const initializeVideos = () => {
-      console.log("Searching for video elements...");
+      devLog("Searching for video elements...");
       
       // 複数のセレクタで動画要素を検索
       const selectors = ['.lazy-video', 'video[data-src]', 'video.acf-video', 'video'];
@@ -108,10 +116,10 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
         });
       });
       
-      console.log("Direct approach - found videos:", allVideos.length);
+      devLog("Direct approach - found videos:", allVideos.length);
       
       allVideos.forEach((video, index) => {
-        console.log(`Direct - Video ${index}:`, {
+        devLog(`Direct - Video ${index}:`, {
           src: video.src,
           dataSrc: video.dataset.src,
           paused: video.paused,
@@ -125,7 +133,7 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
         if (video.dataset.src && !video.src) {
           video.src = video.dataset.src;
           video.removeAttribute('data-src');
-          console.log(`Direct - Set video ${index} src to:`, video.src);
+          devLog(`Direct - Set video ${index} src to:`, video.src);
         }
         
         // 自動再生属性を設定
@@ -136,18 +144,18 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
         
         // 再生を試行
         if (video.paused) {
-          console.log(`Direct - Attempting to play video ${index}`);
+          devLog(`Direct - Attempting to play video ${index}`);
           
           const playVideo = () => {
             video.play().then(() => {
-              console.log(`Direct - Video ${index} playback SUCCESS`);
+              devLog(`Direct - Video ${index} playback SUCCESS`);
             }).catch(error => {
               console.error(`Direct - Video ${index} playback failed:`, error.message);
               
               // ユーザーインタラクション後に再生
               const playOnClick = () => {
                 video.play().then(() => {
-                  console.log(`Direct - Video ${index} started after user interaction`);
+                  devLog(`Direct - Video ${index} started after user interaction`);
                 }).catch(e => {
                   console.error(`Direct - Video ${index} still failed after interaction:`, e);
                 });
@@ -186,7 +194,7 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
   }, [work?.content]); // contentが変更されたときに実行
 
   if (!work) {
-    console.log(
+    devLog(
       "WorkDetailClient: Work data is null, rendering not found message."
     );
     return (
@@ -472,7 +480,8 @@ export default function WorkDetailClient({ work, slug, breadcrumbItems }) {
             mainText="Others"
             className={styles.work__h2Others}
           />
-          <WorkOthers />
+          {/* ★ currentWorkIdを渡して現在の作品を除外 */}
+          <WorkOthers currentWorkId={currentWorkId} />
           <div className={styles.workOthersListButton}>
             <ListViewButton href="/all-works" />
           </div>
