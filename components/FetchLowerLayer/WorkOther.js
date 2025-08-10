@@ -1,7 +1,7 @@
 // components/FetchLowerLayer/WorkOther.jsx
 'use client'; // Next.js のクライアントコンポーネント宣言
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery, gql } from "@apollo/client"; // useQuery と gql をインポート
@@ -220,27 +220,71 @@ const getCategoryName = (work) => {
 // --- WorkOthers コンポーネント ---
 function WorkOthers({ currentWorkId }) {
   const [clickedSlug, setClickedSlug] = useState(null);
+  const [navigationInProgress, setNavigationInProgress] = useState(false);
+  const navigationTimeoutRef = useRef(null);
   const router = useRouter();
 
+  // 🔧 改善されたカードクリックハンドラー
   const handleCardClick = (e, slug) => {
     e.preventDefault();
-    if (clickedSlug) return;
+    
+    // 連続クリック・進行中の遷移を防止
+    if (clickedSlug || navigationInProgress) {
+      devLog("⚠️ Navigation already in progress, ignoring click");
+      return;
+    }
+
+    devLog("🎯 WorkOther card clicked:", slug);
     setClickedSlug(slug);
+    setNavigationInProgress(true);
 
     const workLink = e.currentTarget.querySelector(`.${styles.worksLink}`);
+
+    // 🚀 確実な遷移のための複数の仕組み
+    let navigationTriggered = false;
+
+    const navigate = () => {
+      if (navigationTriggered) return;
+      navigationTriggered = true;
+      devLog("🚀 Navigating to:", `/all-works/${slug}`);
+      router.push(`/all-works/${slug}`);
+    };
+
     if (workLink) {
-      workLink.classList.add(styles.clicked); // `.worksLink.clicked::before` にアニメーションが定義されている前提
+      workLink.classList.add(styles.clicked);
+      
+      // 1. アニメーション完了を監視
       workLink.addEventListener(
         "animationend",
         () => {
-          router.push(`/all-works/${slug}`);
+          devLog("✨ WorkOther link animation completed for:", slug);
+          navigate();
         },
         { once: true }
       );
-    } else {
-      router.push(`/all-works/${slug}`);
+    }
+
+    // 2. フォールバック: 1.5秒後に強制遷移
+    navigationTimeoutRef.current = setTimeout(() => {
+      devLog("⏰ Timeout fallback triggered for WorkOther:", slug);
+      navigate();
+    }, 1500);
+
+    // 3. workLinkが見つからない場合の即座のフォールバック
+    if (!workLink) {
+      devLog("⚠️ WorkOther worksLink not found, immediate fallback");
+      navigate();
     }
   };
+
+  // クリーンアップ関数
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   devLog("WorkOthers component rendering with currentWorkId:", currentWorkId);
 

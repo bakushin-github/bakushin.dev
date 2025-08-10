@@ -1,7 +1,7 @@
 // app/all-works/WorksClient.jsx
 "use client"; // ★★★ クライアントコンポーネントであることを明示 ★★★
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.scss"; // 同じディレクトリのスタイルシートを参照
@@ -158,30 +158,73 @@ function Pagination({ pagination, basePath = "/all-works" }) {
 
 // WorksClient: 作品一覧のメインコンポーネント (クライアントコンポーネント)
 export default function WorksClient({ works, skillStructure, pagination }) {
-  const router = useRouter(); // ✅ useRouter フック
+  const router = useRouter();
   const [clickedWorkSlug, setClickedWorkSlug] = useState(null);
+  const [navigationInProgress, setNavigationInProgress] = useState(false);
+  const navigationTimeoutRef = useRef(null);
 
+  // 🔧 改善されたカードクリックハンドラー
   const handleCardClick = (e, slug) => {
     e.preventDefault();
-    if (clickedWorkSlug) return; // 多重クリック防止
+    
+    // 連続クリック・進行中の遷移を防止
+    if (clickedWorkSlug || navigationInProgress) {
+      devLog("⚠️ Navigation already in progress, ignoring click");
+      return;
+    }
+
+    devLog("🎯 Work card clicked:", slug);
     setClickedWorkSlug(slug);
+    setNavigationInProgress(true);
 
     const target = e.currentTarget;
     const workLink = target.querySelector(`.${styles["work-link"]}`);
 
+    // 🚀 確実な遷移のための複数の仕組み
+    let navigationTriggered = false;
+
+    const navigate = () => {
+      if (navigationTriggered) return;
+      navigationTriggered = true;
+      devLog("🚀 Navigating to:", `/all-works/${slug}`);
+      router.push(`/all-works/${slug}`);
+    };
+
     if (workLink) {
-      workLink.classList.add(styles.clicked); // ← SCSSに `.work-link.clicked::before { ... }` 追加しておくこと
+      workLink.classList.add(styles.clicked);
+      
+      // 1. アニメーション完了を監視
       workLink.addEventListener(
         "animationend",
         () => {
-          router.push(`/all-works/${slug}`);
+          devLog("✨ Work link animation completed for:", slug);
+          navigate();
         },
         { once: true }
       );
-    } else {
-      router.push(`/all-works/${slug}`); // fallback
+    }
+
+    // 2. フォールバック: 1.5秒後に強制遷移
+    navigationTimeoutRef.current = setTimeout(() => {
+      devLog("⏰ Timeout fallback triggered for work:", slug);
+      navigate();
+    }, 1500);
+
+    // 3. workLinkが見つからない場合の即座のフォールバック
+    if (!workLink) {
+      devLog("⚠️ WorkLink not found, immediate fallback");
+      navigate();
     }
   };
+
+  // クリーンアップ関数
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // 列数を検出するためのstateとeffect（ブログ記事一覧と同様）
   const [columns, setColumns] = useState(3); // デフォルトはPCの3列

@@ -69,8 +69,10 @@ function SwiperGallery() {
   const [isClicked, setIsClicked] = useState(false);
   const [clickedSlug, setClickedSlug] = useState(null);
   const [isInView, setIsInView] = useState(false);
+  const [navigationInProgress, setNavigationInProgress] = useState(false); // 遷移中フラグ
   const swiperRef = useRef(null);
   const containerRef = useRef(null);
+  const navigationTimeoutRef = useRef(null); // タイムアウト用ref
 
   // 開発環境でのみログを表示
   const devLog = (message, ...args) => {
@@ -89,6 +91,61 @@ function SwiperGallery() {
       router.push("/all-works");
     }
   };
+
+  // 🔧 改善されたカードクリックハンドラー
+  const handleCardClick = (e, slug) => {
+    e.preventDefault();
+    
+    // 連続クリック・進行中の遷移を防止
+    if (clickedSlug || navigationInProgress) {
+      devLog("⚠️ Navigation already in progress, ignoring click");
+      return;
+    }
+
+    devLog("🎯 Card clicked:", slug);
+    setClickedSlug(slug);
+    setNavigationInProgress(true);
+
+    // 🚀 確実な遷移のための複数の仕組み
+    let navigationTriggered = false;
+
+    const navigate = () => {
+      if (navigationTriggered) return;
+      navigationTriggered = true;
+      devLog("🚀 Navigating to:", `/all-works/${slug}`);
+      router.push(`/all-works/${slug}`);
+    };
+
+    // 1. 元のアニメーション完了を監視（onAnimationEndイベント）
+    // 2. フォールバック: 1.5秒後に強制遷移
+    navigationTimeoutRef.current = setTimeout(() => {
+      devLog("⏰ Timeout fallback triggered for:", slug);
+      navigate();
+    }, 1500);
+
+    // アニメーション完了時の遷移も保持
+    const handleAnimationEnd = () => {
+      devLog("✨ Animation completed for:", slug);
+      navigate();
+    };
+
+    // 次回のレンダリングでアニメーションイベントをセット
+    setTimeout(() => {
+      const titleElement = document.querySelector(`.${styles.title}.${styles.animate}`);
+      if (titleElement) {
+        titleElement.addEventListener('animationend', handleAnimationEnd, { once: true });
+      }
+    }, 0);
+  };
+
+  // クリーンアップ関数
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const [isClient, setIsClient] = useState(false);
   const { loading, error, data } = useQuery(GET_WORKS_QUERY, {
@@ -162,10 +219,19 @@ function SwiperGallery() {
     setIsClient(true);
   }, []);
 
-  if (!isClient || loading) {
+  // 🔧 ローディング状態の改善
+  if (!isClient) {
     return (
       <div className={styles.worksContents}>
-        <p style={{ textAlign: "center", color: "#fff" }}>Loading...</p>
+        <p style={{ textAlign: "center", color: "#fff" }}>Initializing...</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.worksContents}>
+        <p style={{ textAlign: "center", color: "#fff" }}>Loading gallery...</p>
       </div>
     );
   }
@@ -264,7 +330,7 @@ function SwiperGallery() {
               className={styles["work-imageLink"]}
               role="link"
               tabIndex={0}
-              onClick={() => setClickedSlug(work.slug)}
+              onClick={(e) => handleCardClick(e, work.slug)}
             >
               <article className={styles.workCard}>
                 <header className={styles.workHeader}>
