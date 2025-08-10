@@ -109,7 +109,7 @@ const GET_WORKS_WITH_NESTED_SKILL = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }
@@ -139,7 +139,7 @@ const GET_WORKS_WITH_DIRECT_SKILL = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }
@@ -167,7 +167,7 @@ const GET_WORKS_WITH_METADATA = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }

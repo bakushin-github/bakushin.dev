@@ -24,7 +24,7 @@ const GET_WORKS_QUERY = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }

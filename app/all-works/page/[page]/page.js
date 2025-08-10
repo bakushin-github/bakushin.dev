@@ -58,7 +58,7 @@ const GET_WORKS_TEST_NESTED = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }
@@ -96,7 +96,7 @@ const GET_WORKS_TEST_DIRECT = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }
@@ -132,7 +132,7 @@ const GET_WORKS_TEST_META = gql`
         excerpt(format: RENDERED)
         featuredImage {
           node {
-            sourceUrl(size: MEDIUM)
+            sourceUrl
             altText
           }
         }
